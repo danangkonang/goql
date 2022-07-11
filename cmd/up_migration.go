@@ -25,36 +25,41 @@ var upMigrationCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Long:  "A brief description of your command",
 	Run: func(cmd *cobra.Command, args []string) {
+		files, err := ioutil.ReadDir("db/migration")
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(0)
+		}
+
+		upFileName := []string{}
 
 		if tableName != "" {
-			tbls := strings.Split(tableName, " ")
-			for _, n := range tbls {
-				query, e := os.ReadFile(fmt.Sprintf("db/migration/%s", n))
-				if e != nil {
-					fmt.Println(e.Error())
-					os.Exit(0)
+			for _, file := range files {
+				tbls := strings.Split(tableName, " ")
+				// filter only up file
+				fl_up := strings.Split(file.Name(), ".up.")
+				if len(fl_up) > 1 {
+					// find original table name
+					original := strings.Split(fl_up[0], "_migration_")[1]
+					for _, g := range tbls {
+						if g == original {
+							upFileName = append(upFileName, file.Name())
+						}
+					}
 				}
-				ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-				defer cancel()
-				conn := config.Connection()
-				_, err := conn.DB.ExecContext(ctx, string(query))
-				if err != nil {
-					fmt.Println(err.Error())
-					os.Exit(0)
-				}
-				msg := fmt.Sprintf("%s success %s up %s", string(helper.GREEN), string(helper.WHITE), n)
-				fmt.Println(msg)
 			}
 		}
 
 		if tableName == "" {
-			files, err := ioutil.ReadDir("db/migration")
-			if err != nil {
-				fmt.Println(err.Error())
-				os.Exit(0)
-			}
 			for _, file := range files {
-				query, e := os.ReadFile(fmt.Sprintf("db/migration/%s", file.Name()))
+				// filter only up file
+				if len(strings.Split(file.Name(), ".up.")) > 1 {
+					upFileName = append(upFileName, file.Name())
+				}
+			}
+			for _, fil := range upFileName {
+
+				query, e := os.ReadFile(fmt.Sprintf("db/migration/%s", fil))
 				if e != nil {
 					fmt.Println(e.Error())
 					os.Exit(0)
@@ -67,7 +72,7 @@ var upMigrationCmd = &cobra.Command{
 					fmt.Println(err.Error())
 					os.Exit(0)
 				}
-				msg := fmt.Sprintf("%s success %s up %s", string(helper.GREEN), string(helper.WHITE), file.Name())
+				msg := fmt.Sprintf("%s success %s up %s", string(helper.GREEN), string(helper.WHITE), fil)
 				fmt.Println(msg)
 			}
 		}

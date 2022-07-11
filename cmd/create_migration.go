@@ -90,7 +90,7 @@ var migrationCmd = &cobra.Command{
 
 func init() {
 	createCmd.AddCommand(migrationCmd)
-	createCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "A File name to unzip and open in IDE")
+	createCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Table name")
 
 	// Here you will define your flags and configuration settings.
 

@@ -23,37 +23,88 @@ var downMigrationCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Long:  "A brief description of your command",
 	Run: func(cmd *cobra.Command, args []string) {
+		// files, err := ioutil.ReadDir("db/migration")
+		// if err != nil {
+		// 	fmt.Println(err.Error())
+		// 	os.Exit(0)
+		// }
+		// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		// defer cancel()
+		// for _, file := range files {
+		// 	filename := file.Name()
+		// 	rmExtension := strings.Split(filename, ".")
+		// 	rmMigration := strings.Split(rmExtension[0], "_migration_")
+		// 	originalname := rmMigration[1]
+		// 	var query string
+		// 	switch os.Getenv("DB_DRIVER") {
+		// 	case "mysql":
+		// 		// query = fmt.Sprintf("TRUNCATE %s;", originalname)
+		// 		query = fmt.Sprintf("DROP TABLE %s;", originalname)
+		// 	case "postgres":
+		// 		// query = fmt.Sprintf("TRUNCATE %s RESTART IDENTITY;", originalname)
+		// 		// IF EXISTS
+		// 		query = fmt.Sprintf("DROP TABLE %s;", originalname)
+		// 	}
+		// 	conn := config.Connection()
+		// 	_, err := conn.DB.ExecContext(ctx, query)
+		// 	if err != nil {
+		// 		fmt.Println(err.Error())
+		// 		os.Exit(0)
+		// 	}
+		// 	// fmt.Println(query)
+		// 	msg := fmt.Sprintf("%s success %s down %s", string(helper.GREEN), string(helper.WHITE), file.Name())
+		// 	fmt.Println(msg)
+		// }
 		files, err := ioutil.ReadDir("db/migration")
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(0)
 		}
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		for _, file := range files {
-			filename := file.Name()
-			rmExtension := strings.Split(filename, ".")
-			rmMigration := strings.Split(rmExtension[0], "_migration_")
-			originalname := rmMigration[1]
-			var query string
-			switch os.Getenv("DB_DRIVER") {
-			case "mysql":
-				// query = fmt.Sprintf("TRUNCATE %s;", originalname)
-				query = fmt.Sprintf("DROP TABLE %s;", originalname)
-			case "postgres":
-				// query = fmt.Sprintf("TRUNCATE %s RESTART IDENTITY;", originalname)
-				// IF EXISTS
-				query = fmt.Sprintf("DROP TABLE %s;", originalname)
+
+		upFileName := []string{}
+
+		if tableName != "" {
+			for _, file := range files {
+				tbls := strings.Split(tableName, " ")
+				// filter only up file
+				fl_up := strings.Split(file.Name(), ".down.")
+				if len(fl_up) > 1 {
+					// find original table name
+					original := strings.Split(fl_up[0], "_migration_")[1]
+					for _, g := range tbls {
+						if g == original {
+							upFileName = append(upFileName, file.Name())
+						}
+					}
+				}
 			}
-			conn := config.Connection()
-			_, err := conn.DB.ExecContext(ctx, query)
-			if err != nil {
-				fmt.Println(err.Error())
-				os.Exit(0)
+		}
+
+		if tableName == "" {
+			for _, file := range files {
+				// filter only up file
+				if len(strings.Split(file.Name(), ".down.")) > 1 {
+					upFileName = append(upFileName, file.Name())
+				}
 			}
-			// fmt.Println(query)
-			msg := fmt.Sprintf("%s success %s down %s", string(helper.GREEN), string(helper.WHITE), file.Name())
-			fmt.Println(msg)
+			for _, fil := range upFileName {
+
+				query, e := os.ReadFile(fmt.Sprintf("db/migration/%s", fil))
+				if e != nil {
+					fmt.Println(e.Error())
+					os.Exit(0)
+				}
+				ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+				defer cancel()
+				conn := config.Connection()
+				_, err := conn.DB.ExecContext(ctx, string(query))
+				if err != nil {
+					fmt.Println(err.Error())
+					os.Exit(0)
+				}
+				msg := fmt.Sprintf("%s success %s up %s", string(helper.GREEN), string(helper.WHITE), fil)
+				fmt.Println(msg)
+			}
 		}
 	},
 }
