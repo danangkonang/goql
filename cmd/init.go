@@ -6,27 +6,55 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
+)
+
+var (
+	driver   string
+	host     string
+	port     string
+	database string
+	user     string
+	password string
 )
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long:  "A brief description of your command",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("init called")
+		if _, err := os.Stat("db"); os.IsNotExist(err) {
+			os.Mkdir("db", 0700)
+			os.Mkdir("db/migration", 0700)
+			os.Mkdir("db/seeder", 0700)
+			fmt.Println("create directory" + "db")
+		}
+		if _, err := os.Stat("db/migration"); os.IsNotExist(err) {
+			os.Mkdir("db/migration", 0700)
+			fmt.Println("create directory" + "db/migration")
+		}
+		if _, err := os.Stat("db/seeder"); os.IsNotExist(err) {
+			os.Mkdir("db/seeder", 0700)
+			fmt.Println("create directory" + "db/seeder")
+		}
+		if _, err := os.Stat(".env"); os.IsNotExist(err) {
+			createEnvFile(".env")
+			fmt.Println("create file" + ".env")
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(initCmd)
+	rootCmd.PersistentFlags().StringVarP(&driver, "driver", "", "", "databse driver")
+	rootCmd.PersistentFlags().StringVarP(&host, "host", "", "", "databse host")
+	rootCmd.PersistentFlags().StringVarP(&port, "port", "", "", "databse port")
+	rootCmd.PersistentFlags().StringVarP(&database, "database", "", "", "databse database")
+	rootCmd.PersistentFlags().StringVarP(&user, "user", "", "", "databse user")
+	rootCmd.PersistentFlags().StringVarP(&password, "password", "", "", "databse password")
 
 	// Here you will define your flags and configuration settings.
 
@@ -37,4 +65,24 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func createEnvFile(name string) {
+
+	var file, err = os.Create(name)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	file_env := fmt.Sprintf(
+		"DB_DRIVER=%s\nDB_HOST=%s\nDB_PORT=%s\nDB_NAME=%s\nDB_USER=%s\nDB_PASSWORD=%s\n",
+		driver,
+		host,
+		port,
+		database,
+		user,
+		password,
+	)
+	file.WriteString(file_env)
+	defer file.Close()
+
 }

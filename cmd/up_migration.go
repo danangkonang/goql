@@ -5,8 +5,13 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"time"
 
+	"github.com/danangkonang/goql/config"
 	"github.com/spf13/cobra"
 )
 
@@ -14,14 +19,28 @@ import (
 var upMigrationCmd = &cobra.Command{
 	Use:   "migration",
 	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long:  "A brief description of your command",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("upMigration called")
+		files, err := ioutil.ReadDir("db/migration")
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(0)
+		}
+		for _, file := range files {
+			dat, e := os.ReadFile(fmt.Sprintf("db/migration/%s", file.Name()))
+			if e != nil {
+				fmt.Println(e)
+				os.Exit(0)
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			conn := config.Connection()
+			_, err := conn.DB.ExecContext(ctx, string(dat))
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(0)
+			}
+		}
 	},
 }
 
