@@ -23,8 +23,8 @@ var (
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "A brief description of your command",
-	Long:  "A brief description of your command",
+	Short: "Generate structure directory migration",
+	Long:  "Generate structure directory migration",
 	Run: func(cmd *cobra.Command, args []string) {
 		if _, err := os.Stat("db"); os.IsNotExist(err) {
 			os.Mkdir("db", 0700)
@@ -49,12 +49,12 @@ var initCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(initCmd)
-	rootCmd.PersistentFlags().StringVarP(&driver, "driver", "", "", "databse driver")
-	rootCmd.PersistentFlags().StringVarP(&host, "host", "", "", "databse host")
-	rootCmd.PersistentFlags().StringVarP(&port, "port", "", "", "databse port")
-	rootCmd.PersistentFlags().StringVarP(&database, "database", "", "", "databse database")
-	rootCmd.PersistentFlags().StringVarP(&user, "user", "", "", "databse user")
-	rootCmd.PersistentFlags().StringVarP(&password, "password", "", "", "databse password")
+	initCmd.PersistentFlags().StringVarP(&driver, "driver", "", "", "databse driver")
+	initCmd.PersistentFlags().StringVarP(&host, "host", "", "", "databse host")
+	initCmd.PersistentFlags().StringVarP(&port, "port", "", "", "databse port")
+	initCmd.PersistentFlags().StringVarP(&database, "database", "", "", "databse database")
+	initCmd.PersistentFlags().StringVarP(&user, "user", "", "", "databse user")
+	initCmd.PersistentFlags().StringVarP(&password, "password", "", "", "databse password")
 
 	// Here you will define your flags and configuration settings.
 

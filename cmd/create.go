@@ -13,8 +13,8 @@ import (
 // createCmd represents the create command
 var createCmd = &cobra.Command{
 	Use:   "create",
-	Short: "A brief description of your command",
-	Long:  "A brief description of your command",
+	Short: "Create migration or seeder",
+	Long:  "Create migration or seeder",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			cmd.Help()

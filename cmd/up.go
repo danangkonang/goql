@@ -13,8 +13,8 @@ import (
 // upCmd represents the up command
 var upCmd = &cobra.Command{
 	Use:   "up",
-	Short: "A brief description of your command",
-	Long:  "A brief description of your command",
+	Short: "Execute file migration or seeder",
+	Long:  "Execute file migration or seeder",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			cmd.Help()
@@ -25,6 +25,7 @@ var upCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(upCmd)
+	// upCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "A File name to unzip and open in IDE")
 
 	// Here you will define your flags and configuration settings.
 

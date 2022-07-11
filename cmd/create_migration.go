@@ -5,7 +5,6 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -22,16 +21,9 @@ var migrationCmd = &cobra.Command{
 	Use:   "migration",
 	Short: "A brief description of your command",
 	Long:  "A brief description of your command",
-	Args: func(cmd *cobra.Command, args []string) error {
-		if tableName == "" && len(args) < 1 {
-			fmt.Println(args)
-			return errors.New("accepts 1 arg(s)")
-		}
-		return nil
-	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if tableName == "" {
-			fmt.Println("err.Error()")
+			fmt.Println("table name can not empty")
 			os.Exit(0)
 		}
 		files, err := ioutil.ReadDir("db/migration")
@@ -45,39 +37,54 @@ var migrationCmd = &cobra.Command{
 			rmMigration := strings.Split(rmExtension[0], "_migration_")
 			originalname := rmMigration[1]
 			if tableName == originalname {
-				fmt.Println("table already exists")
+				fmt.Println("table name already exists")
 				os.Exit(0)
 			}
 		}
-		file_name := helper.CreateName(len(files)) + "_migration_" + tableName + ".sql"
-		path := "db/migration/" + file_name
-		file, err := os.Create(path)
+		unix_name := helper.CreateName(len(files) / 2)
+		file_name_down := unix_name + "_migration_" + tableName + ".down.sql"
+		path_down := "db/migration/" + file_name_down
+		file_down, err := os.Create(path_down)
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(0)
 		}
-		var query string
-		switch os.Getenv("DB_DRIVER") {
-		case "postgres":
-			query += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s(\n", tableName)
-			query += "\tid SERIAL,\n"
-			query += "\tname VARCHAR (225) NOT NULL,\n"
-			query += "\tcreated_at INTEGER NOT NULL,\n"
-			query += "\tupdated_at INTEGER NULL,\n"
-			query += fmt.Sprintf("\tCONSTRAINT %s_pkey PRIMARY KEY (id)\n", tableName)
-			query += ");\n"
-		case "mysql":
-			query += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s(\n", tableName)
-			query += "\tid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,\n"
-			query += "\tname VARCHAR (225) NOT NULL,\n"
-			query += "\tcreated_at INTEGER NOT NULL,\n"
-			query += "\tupdated_at INTEGER NULL\n"
-			query += ");\n"
+
+		file_name_up := unix_name + "_migration_" + tableName + ".up.sql"
+		path_up := "db/migration/" + file_name_up
+		file_up, err := os.Create(path_up)
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(0)
 		}
 
-		file.WriteString(query)
-		defer file.Close()
-		fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path)
+		var query_up string
+		var query_down string
+		switch os.Getenv("DB_DRIVER") {
+		case "postgres":
+			query_up += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s(\n", tableName)
+			query_up += "\tid SERIAL,\n"
+			query_up += "\tname VARCHAR (225) NOT NULL,\n"
+			query_up += "\tcreated_at INTEGER NOT NULL,\n"
+			query_up += "\tupdated_at INTEGER NULL,\n"
+			query_up += fmt.Sprintf("\tCONSTRAINT %s_pkey PRIMARY KEY (id)\n", tableName)
+			query_up += ");\n"
+			query_down += fmt.Sprintf("DROP TABLE IF EXISTS %s;", tableName)
+		case "mysql":
+			query_up += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s(\n", tableName)
+			query_up += "\tid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,\n"
+			query_up += "\tname VARCHAR (225) NOT NULL,\n"
+			query_up += "\tcreated_at INTEGER NOT NULL,\n"
+			query_up += "\tupdated_at INTEGER NULL\n"
+			query_up += ");\n"
+			query_down += fmt.Sprintf("DROP TABLE IF EXISTS %s;", tableName)
+		}
+
+		file_up.WriteString(query_up)
+		file_down.WriteString(query_down)
+		defer file_up.Close()
+		defer file_down.Close()
+		fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_up)
 	},
 }
 
