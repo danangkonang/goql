@@ -57,24 +57,24 @@ var upMigrationCmd = &cobra.Command{
 					upFileName = append(upFileName, file.Name())
 				}
 			}
-			for _, fil := range upFileName {
+		}
 
-				query, e := os.ReadFile(fmt.Sprintf("db/migration/%s", fil))
-				if e != nil {
-					fmt.Println(e.Error())
-					os.Exit(0)
-				}
-				ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-				defer cancel()
-				conn := config.Connection()
-				_, err := conn.DB.ExecContext(ctx, string(query))
-				if err != nil {
-					fmt.Println(err.Error())
-					os.Exit(0)
-				}
-				msg := fmt.Sprintf("%s success %s up %s", string(helper.GREEN), string(helper.WHITE), fil)
-				fmt.Println(msg)
+		for _, fil := range upFileName {
+			query, e := os.ReadFile(fmt.Sprintf("db/migration/%s", fil))
+			if e != nil {
+				fmt.Println(e.Error())
+				os.Exit(0)
 			}
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			conn := config.Connection()
+			_, err := conn.DB.ExecContext(ctx, string(query))
+			if err != nil {
+				fmt.Println(err.Error())
+				os.Exit(0)
+			}
+			msg := fmt.Sprintf("%s success %s up %s", string(helper.GREEN), string(helper.WHITE), fil)
+			fmt.Println(msg)
 		}
 	},
 }
