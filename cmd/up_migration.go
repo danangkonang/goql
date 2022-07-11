@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/danangkonang/goql/config"
+	"github.com/danangkonang/goql/helper"
 	"github.com/spf13/cobra"
 )
 
@@ -27,19 +28,21 @@ var upMigrationCmd = &cobra.Command{
 			os.Exit(0)
 		}
 		for _, file := range files {
-			dat, e := os.ReadFile(fmt.Sprintf("db/migration/%s", file.Name()))
+			query, e := os.ReadFile(fmt.Sprintf("db/migration/%s", file.Name()))
 			if e != nil {
-				fmt.Println(e)
+				fmt.Println(e.Error())
 				os.Exit(0)
 			}
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 			conn := config.Connection()
-			_, err := conn.DB.ExecContext(ctx, string(dat))
+			_, err := conn.DB.ExecContext(ctx, string(query))
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println(err.Error())
 				os.Exit(0)
 			}
+			msg := fmt.Sprintf("%s success %s up %s", string(helper.GREEN), string(helper.WHITE), file.Name())
+			fmt.Println(msg)
 		}
 	},
 }

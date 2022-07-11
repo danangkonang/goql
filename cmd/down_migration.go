@@ -36,15 +36,22 @@ var downMigrationCmd = &cobra.Command{
 			rmMigration := strings.Split(rmExtension[0], "_migration_")
 			originalname := rmMigration[1]
 			var query string
-			switch "psql" {
+			switch os.Getenv("DB_DRIVER") {
 			case "mysql":
-				query = fmt.Sprintf("TRUNCATE %s;", originalname)
-			case "psql":
-				query = fmt.Sprintf("TRUNCATE  %s RESTART IDENTITY;", originalname)
+				// query = fmt.Sprintf("TRUNCATE %s;", originalname)
+				query = fmt.Sprintf("DROP TABLE %s;", originalname)
+			case "postgres":
+				// query = fmt.Sprintf("TRUNCATE %s RESTART IDENTITY;", originalname)
+				// IF EXISTS
+				query = fmt.Sprintf("DROP TABLE %s;", originalname)
 			}
-			// fmt.Println("QUERY", query)
 			conn := config.Connection()
-			conn.DB.ExecContext(ctx, query)
+			_, err := conn.DB.ExecContext(ctx, query)
+			if err != nil {
+				fmt.Println(err.Error())
+				os.Exit(0)
+			}
+			// fmt.Println(query)
 			msg := fmt.Sprintf("%s success %s down %s", string(helper.GREEN), string(helper.WHITE), file.Name())
 			fmt.Println(msg)
 		}
