@@ -12,9 +12,10 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "goql",
-	Short: "Simple auto migrate database",
-	Long:  "Simple auto migrate database",
+	Use:     "goql",
+	Version: "0.0.1",
+	Short:   "Simple auto migrate database",
+	Long:    "Simple auto migrate database",
 	CompletionOptions: cobra.CompletionOptions{
 		DisableDefaultCmd: true,
 	},

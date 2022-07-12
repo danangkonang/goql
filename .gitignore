@@ -1,3 +1,7 @@
 .env
 docker-compose.yml
 db/
+goql_linux
+goql_windows.exe
+goql_macOS
+main

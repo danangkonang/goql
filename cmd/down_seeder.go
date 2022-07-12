@@ -23,7 +23,7 @@ var downSeederCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Long:  "A brief description of your command",
 	Run: func(cmd *cobra.Command, args []string) {
-		files, err := ioutil.ReadDir("db/migration")
+		files, err := ioutil.ReadDir("db/seeder")
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(0)
@@ -33,7 +33,7 @@ var downSeederCmd = &cobra.Command{
 		for _, file := range files {
 			filename := file.Name()
 			rmExtension := strings.Split(filename, ".")
-			rmMigration := strings.Split(rmExtension[0], "_migration_")
+			rmMigration := strings.Split(rmExtension[0], "_seeder_")
 			originalname := rmMigration[1]
 			var query string
 			switch os.Getenv("DB_DRIVER") {

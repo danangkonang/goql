@@ -11,11 +11,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/brianvoe/gofakeit/v6"
 	"github.com/danangkonang/goql/helper"
+	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 )
 
 // createSeederCmd represents the createSeeder command
+var field string
+var count int
 var createSeederCmd = &cobra.Command{
 	Use:   "seeder",
 	Short: "Generate seeder file",
@@ -41,6 +45,59 @@ var createSeederCmd = &cobra.Command{
 				os.Exit(0)
 			}
 		}
+		// fmt.Println(strings.Split(field, ","))
+		query := ""
+		column := ""
+		datatype := []string{}
+		for _, v := range strings.Split(field, ",") {
+			fl := strings.Split(v, ":")
+			column += fmt.Sprintf("%s,", fl[0])
+			datatype = append(datatype, fl[1])
+		}
+		query += fmt.Sprintf("INSERT INTO %s\n", tableName)
+		query += fmt.Sprintf("\t(%s)\n", strings.TrimSuffix(column, ","))
+		query += "VALUES\n"
+
+		for i := 0; i < count; i++ {
+			var da string
+			for _, tp := range datatype {
+				switch tp {
+				case "uuid":
+					id := uuid.New().String()
+					da += fmt.Sprintf("'%s',", id)
+				case "email":
+					da += fmt.Sprintf("'%s',", gofakeit.Email())
+				case "name":
+					da += fmt.Sprintf("'%s',", gofakeit.Name())
+				case "phone":
+					da += fmt.Sprintf("'%s',", gofakeit.Phone())
+				case "color":
+					da += fmt.Sprintf("'%s',", gofakeit.Color())
+				case "gender":
+					da += fmt.Sprintf("'%s',", gofakeit.Gender())
+				case "hobby":
+					da += fmt.Sprintf("'%s',", gofakeit.Hobby())
+				case "street":
+					da += fmt.Sprintf("'%s',", gofakeit.Street())
+				case "city":
+					da += fmt.Sprintf("'%s',", gofakeit.City())
+				case "country":
+					da += fmt.Sprintf("'%s',", gofakeit.Country())
+				case "lat":
+					da += fmt.Sprintf("%f,", gofakeit.Latitude())
+				case "lng":
+					da += fmt.Sprintf("%f,", gofakeit.Longitude())
+				case "time":
+					da += fmt.Sprintf("%d,", time.Now().Unix())
+				}
+			}
+			if i == count-1 {
+				query += fmt.Sprintf("\t(%s);\n", strings.TrimSuffix(da, ","))
+			} else {
+				query += fmt.Sprintf("\t(%s),\n", strings.TrimSuffix(da, ","))
+			}
+		}
+
 		unix_name := helper.CreateName(len(files))
 		file_name_seeder := unix_name + "_seeder_" + tableName + ".sql"
 		path_seeder := "db/seeder/" + file_name_seeder
@@ -50,16 +107,17 @@ var createSeederCmd = &cobra.Command{
 			os.Exit(0)
 		}
 
-		var query string
-		switch os.Getenv("DB_DRIVER") {
-		case "postgres":
-			query += fmt.Sprintf("INSERT INTO %s\n", tableName)
-			query += "\t(id, name, created_at, updated_at)\n"
-			query += "VALUES\n"
-			query += fmt.Sprintf("\t(1, 'bob', %d, %d);\n", time.Now().Unix(), 0)
-		case "mysql":
-			query += ");\n"
-		}
+		// var query string
+		// switch os.Getenv("DB_DRIVER") {
+		// case "postgres":
+		// 	fmt.Println(field)
+		// 	// query += fmt.Sprintf("INSERT INTO %s\n", tableName)
+		// 	// query += "\t(id, name, created_at, updated_at)\n"
+		// 	// query += "VALUES\n"
+		// 	// query += fmt.Sprintf("\t(1, 'bob', %d, %d);\n", time.Now().Unix(), 0)
+		// case "mysql":
+		// 	query += ");\n"
+		// }
 
 		file_seeder.WriteString(query)
 		defer file_seeder.Close()
@@ -70,6 +128,8 @@ var createSeederCmd = &cobra.Command{
 func init() {
 	createCmd.AddCommand(createSeederCmd)
 	createSeederCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "For table name")
+	createSeederCmd.PersistentFlags().StringVarP(&field, "field", "", "", "For table name")
+	createSeederCmd.PersistentFlags().IntVarP(&count, "count", "", 1, "For table name")
 
 	// Here you will define your flags and configuration settings.
 
