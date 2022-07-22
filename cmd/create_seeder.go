@@ -35,6 +35,7 @@ var createSeederCmd = &cobra.Command{
 			fmt.Println(err.Error())
 			os.Exit(0)
 		}
+
 		for _, file := range files {
 			filename := file.Name()
 			rmExtension := strings.Split(filename, ".")
@@ -45,15 +46,25 @@ var createSeederCmd = &cobra.Command{
 				os.Exit(0)
 			}
 		}
+		// fmt.Println(files)
 		// fmt.Println(strings.Split(field, ","))
+
 		query := ""
 		column := ""
 		datatype := []string{}
+		// fmt.Println(strings.Split(field, ","))
+		// fmt.Println(query)
+		// fmt.Println(count)
+
+		// if field != "" {
 		for _, v := range strings.Split(field, ",") {
 			fl := strings.Split(v, ":")
 			column += fmt.Sprintf("%s,", fl[0])
 			datatype = append(datatype, fl[1])
 		}
+		// }
+		// fmt.Println(datatype)
+		// os.Exit(0)
 		query += fmt.Sprintf("INSERT INTO %s\n", tableName)
 		query += fmt.Sprintf("\t(%s)\n", strings.TrimSuffix(column, ","))
 		query += "VALUES\n"
@@ -88,6 +99,8 @@ var createSeederCmd = &cobra.Command{
 				case "lng":
 					da += fmt.Sprintf("%f,", gofakeit.Longitude())
 				case "time":
+					da += fmt.Sprintf("%d,", time.Now())
+				case "unixtime":
 					da += fmt.Sprintf("%d,", time.Now().Unix())
 				}
 			}
@@ -98,8 +111,25 @@ var createSeederCmd = &cobra.Command{
 			}
 		}
 
-		unix_name := helper.CreateName(len(files))
-		file_name_seeder := unix_name + "_seeder_" + tableName + ".sql"
+		query_down := ""
+		switch os.Getenv("DB_DRIVER") {
+		case "postgres":
+			query_down += fmt.Sprintf("TRUNCATE %s;", tableName)
+		case "mysql":
+			query_down += fmt.Sprintf("TRUNCATE %s;", tableName)
+		}
+
+		unix_name := helper.CreateName(len(files) / 2)
+
+		file_name_seeder_down := unix_name + "_seeder_" + tableName + ".down.sql"
+		path_seeder_down := "db/seeder/" + file_name_seeder_down
+		file_seeder_down, err := os.Create(path_seeder_down)
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(0)
+		}
+
+		file_name_seeder := unix_name + "_seeder_" + tableName + ".up.sql"
 		path_seeder := "db/seeder/" + file_name_seeder
 		file_seeder, err := os.Create(path_seeder)
 		if err != nil {
@@ -119,17 +149,21 @@ var createSeederCmd = &cobra.Command{
 		// 	query += ");\n"
 		// }
 
+		file_seeder_down.WriteString(query_down)
+		defer file_seeder_down.Close()
+
 		file_seeder.WriteString(query)
 		defer file_seeder.Close()
+		fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_seeder_down)
 		fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_seeder)
 	},
 }
 
 func init() {
 	createCmd.AddCommand(createSeederCmd)
-	createSeederCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "For table name")
-	createSeederCmd.PersistentFlags().StringVarP(&field, "field", "", "", "For table name")
-	createSeederCmd.PersistentFlags().IntVarP(&count, "count", "", 1, "For table name")
+	createSeederCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Name of table")
+	createSeederCmd.PersistentFlags().StringVarP(&field, "field", "", "", "Data tipe seeder, format 'colum:data type'")
+	createSeederCmd.PersistentFlags().IntVarP(&count, "count", "", 1, "Many seeder data will be generate")
 
 	// Here you will define your flags and configuration settings.
 

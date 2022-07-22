@@ -8,3 +8,4 @@ build:
 	GOOS=linux GOARCH=amd64 go build -o goql_linux main.go
 	GOOS=windows GOARCH=amd64 go build -o goql_windows.exe main.go
 	OOS=darwin GOARCH=amd64 go build -o goql_macOS main.go
+	
