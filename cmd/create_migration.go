@@ -37,7 +37,7 @@ var migrationCmd = &cobra.Command{
 			rmMigration := strings.Split(rmExtension[0], "_migration_")
 			originalname := rmMigration[1]
 			if tableName == originalname {
-				fmt.Println("table name already exists")
+				fmt.Printf("table '%s' already exists", tableName)
 				os.Exit(0)
 			}
 		}
@@ -84,6 +84,7 @@ var migrationCmd = &cobra.Command{
 		file_down.WriteString(query_down)
 		defer file_up.Close()
 		defer file_down.Close()
+		fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_down)
 		fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_up)
 	},
 }

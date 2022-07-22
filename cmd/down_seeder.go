@@ -28,27 +28,48 @@ var downSeederCmd = &cobra.Command{
 			fmt.Println(err.Error())
 			os.Exit(0)
 		}
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		for _, file := range files {
-			filename := file.Name()
-			rmExtension := strings.Split(filename, ".")
-			rmMigration := strings.Split(rmExtension[0], "_seeder_")
-			originalname := rmMigration[1]
-			var query string
-			switch os.Getenv("DB_DRIVER") {
-			case "mysql":
-				query = fmt.Sprintf("TRUNCATE %s;", originalname)
-			case "postgres":
-				query = fmt.Sprintf("TRUNCATE %s RESTART IDENTITY;", originalname)
+		upFileName := []string{}
+
+		if tableName != "" {
+			for _, file := range files {
+				tbls := strings.Split(tableName, " ")
+				// filter only up file
+				fl_up := strings.Split(file.Name(), ".down.")
+				// find original table name
+				original := strings.Split(fl_up[0], "_seeder_")[1]
+				for _, g := range tbls {
+					if g == original {
+						upFileName = append(upFileName, file.Name())
+					}
+				}
 			}
+		}
+
+		if tableName == "" {
+			for _, file := range files {
+				// filter only up file
+				if len(strings.Split(file.Name(), ".down.")) > 1 {
+					upFileName = append(upFileName, file.Name())
+				}
+			}
+
+		}
+
+		for _, fil := range upFileName {
+			query, e := os.ReadFile(fmt.Sprintf("db/seeder/%s", fil))
+			if e != nil {
+				fmt.Println(e.Error())
+				os.Exit(0)
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
 			conn := config.Connection()
-			_, err := conn.DB.ExecContext(ctx, query)
+			_, err := conn.DB.ExecContext(ctx, string(query))
 			if err != nil {
 				fmt.Println(err.Error())
 				os.Exit(0)
 			}
-			msg := fmt.Sprintf("%s success %s down %s", string(helper.GREEN), string(helper.WHITE), file.Name())
+			msg := fmt.Sprintf("%s success %sdown %s", string(helper.GREEN), string(helper.WHITE), fil)
 			fmt.Println(msg)
 		}
 	},
@@ -56,6 +77,7 @@ var downSeederCmd = &cobra.Command{
 
 func init() {
 	downCmd.AddCommand(downSeederCmd)
+	downCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Table name")
 
 	// Here you will define your flags and configuration settings.
 

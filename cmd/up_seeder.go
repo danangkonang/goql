@@ -33,7 +33,9 @@ var upSeederCmd = &cobra.Command{
 		if tableName != "" {
 			for _, file := range files {
 				tbls := strings.Split(tableName, " ")
-				fl_up := strings.Split(file.Name(), ".")
+				// filter only up file
+				fl_up := strings.Split(file.Name(), ".up.")
+				// find original table name
 				original := strings.Split(fl_up[0], "_seeder_")[1]
 				for _, g := range tbls {
 					if g == original {
@@ -45,9 +47,14 @@ var upSeederCmd = &cobra.Command{
 
 		if tableName == "" {
 			for _, file := range files {
-				upFileName = append(upFileName, file.Name())
+				// filter only up file
+				if len(strings.Split(file.Name(), ".up.")) > 1 {
+					upFileName = append(upFileName, file.Name())
+				}
 			}
+
 		}
+
 		for _, fil := range upFileName {
 			query, e := os.ReadFile(fmt.Sprintf("db/seeder/%s", fil))
 			if e != nil {
@@ -71,7 +78,7 @@ var upSeederCmd = &cobra.Command{
 
 func init() {
 	upCmd.AddCommand(upSeederCmd)
-	upSeederCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "For table name")
+	upSeederCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Table name")
 
 	// Here you will define your flags and configuration settings.
 

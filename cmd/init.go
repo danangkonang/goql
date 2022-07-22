@@ -73,6 +73,9 @@ func createEnvFile(name string) {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+	if driver == "" {
+		driver = "mysql"
+	}
 	file_env := fmt.Sprintf(
 		"DB_DRIVER=%s\nDB_HOST=%s\nDB_PORT=%s\nDB_NAME=%s\nDB_USER=%s\nDB_PASSWORD=%s\n",
 		driver,
