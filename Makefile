@@ -1,7 +1,3 @@
-compile:
-	cleare
-	build
-
 cleare:
 	rm goql_linux goql_windows.exe goql_macOS
 
