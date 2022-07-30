@@ -41,8 +41,8 @@ var migrationCmd = &cobra.Command{
 				os.Exit(0)
 			}
 		}
-		unix_name := helper.CreateName(len(files) / 2)
-		file_name_down := unix_name + "_migration_" + tableName + ".down.sql"
+		unix_name_down := helper.CreateName(len(files) + 1)
+		file_name_down := unix_name_down + "_migration_" + tableName + ".down.sql"
 		path_down := "db/migration/" + file_name_down
 		file_down, err := os.Create(path_down)
 		if err != nil {
@@ -50,7 +50,8 @@ var migrationCmd = &cobra.Command{
 			os.Exit(0)
 		}
 
-		file_name_up := unix_name + "_migration_" + tableName + ".up.sql"
+		unix_name_up := helper.CreateName(len(files))
+		file_name_up := unix_name_up + "_migration_" + tableName + ".up.sql"
 		path_up := "db/migration/" + file_name_up
 		file_up, err := os.Create(path_up)
 		if err != nil {

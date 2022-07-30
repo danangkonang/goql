@@ -36,81 +36,20 @@ var createSeederCmd = &cobra.Command{
 			os.Exit(0)
 		}
 
+		var isDown bool
+
 		for _, file := range files {
 			filename := file.Name()
-			rmExtension := strings.Split(filename, ".")
-			rmMigration := strings.Split(rmExtension[0], "_seeder_")
-			originalname := rmMigration[1]
-			if tableName == originalname {
-				fmt.Println("seeder table name already exists")
-				os.Exit(0)
-			}
-		}
-		// fmt.Println(files)
-		// fmt.Println(strings.Split(field, ","))
+			downSplit := strings.Split(filename, ".down.")
 
-		query := ""
-		column := ""
-		datatype := []string{}
-		// fmt.Println(strings.Split(field, ","))
-		// fmt.Println(query)
-		// fmt.Println(count)
-
-		// if field != "" {
-		for _, v := range strings.Split(field, ",") {
-			fl := strings.Split(v, ":")
-			column += fmt.Sprintf("%s,", fl[0])
-			datatype = append(datatype, fl[1])
-		}
-		// }
-		// fmt.Println(datatype)
-		// os.Exit(0)
-		query += fmt.Sprintf("INSERT INTO %s\n", tableName)
-		query += fmt.Sprintf("\t(%s)\n", strings.TrimSuffix(column, ","))
-		query += "VALUES\n"
-
-		for i := 0; i < count; i++ {
-			var da string
-			for _, tp := range datatype {
-				switch tp {
-				case "uuid":
-					id := uuid.New().String()
-					da += fmt.Sprintf("'%s',", id)
-				case "email":
-					da += fmt.Sprintf("'%s',", gofakeit.Email())
-				case "name":
-					da += fmt.Sprintf("'%s',", gofakeit.Name())
-				case "phone":
-					da += fmt.Sprintf("'%s',", gofakeit.Phone())
-				case "color":
-					da += fmt.Sprintf("'%s',", gofakeit.Color())
-				case "gender":
-					da += fmt.Sprintf("'%s',", gofakeit.Gender())
-				case "hobby":
-					da += fmt.Sprintf("'%s',", gofakeit.Hobby())
-				case "street":
-					da += fmt.Sprintf("'%s',", gofakeit.Street())
-				case "city":
-					da += fmt.Sprintf("'%s',", gofakeit.City())
-				case "country":
-					da += fmt.Sprintf("'%s',", gofakeit.Country())
-				case "lat":
-					da += fmt.Sprintf("%f,", gofakeit.Latitude())
-				case "lng":
-					da += fmt.Sprintf("%f,", gofakeit.Longitude())
-				case "time":
-					da += fmt.Sprintf("%d,", time.Now())
-				case "unixtime":
-					da += fmt.Sprintf("%d,", time.Now().Unix())
+			if len(downSplit) > 1 {
+				originalUpName := strings.Split(downSplit[0], "_seeder_")
+				if tableName == originalUpName[1] {
+					isDown = true
 				}
 			}
-			if i == count-1 {
-				query += fmt.Sprintf("\t(%s);\n", strings.TrimSuffix(da, ","))
-			} else {
-				query += fmt.Sprintf("\t(%s),\n", strings.TrimSuffix(da, ","))
-			}
-		}
 
+		}
 		query_down := ""
 		switch os.Getenv("DB_DRIVER") {
 		case "postgres":
@@ -119,43 +58,110 @@ var createSeederCmd = &cobra.Command{
 			query_down += fmt.Sprintf("TRUNCATE %s;", tableName)
 		}
 
-		unix_name := helper.CreateName(len(files) / 2)
+		var nextName int
+		nextName = len(files)
 
-		file_name_seeder_down := unix_name + "_seeder_" + tableName + ".down.sql"
-		path_seeder_down := "db/seeder/" + file_name_seeder_down
-		file_seeder_down, err := os.Create(path_seeder_down)
-		if err != nil {
-			fmt.Println(err.Error())
-			os.Exit(0)
+		if !isDown {
+			nextName += 1
+			unix_down_name := helper.CreateName(len(files))
+			file_name_seeder := unix_down_name + "_seeder_" + tableName + ".down.sql"
+			path_down_seeder := "db/seeder/" + file_name_seeder
+			file_down_seeder, err := os.Create(path_down_seeder)
+			if err != nil {
+				fmt.Println(err.Error())
+				os.Exit(0)
+			}
+			file_down_seeder.WriteString(query_down)
+			defer file_down_seeder.Close()
+			fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_down_seeder)
 		}
 
-		file_name_seeder := unix_name + "_seeder_" + tableName + ".up.sql"
-		path_seeder := "db/seeder/" + file_name_seeder
-		file_seeder, err := os.Create(path_seeder)
-		if err != nil {
-			fmt.Println(err.Error())
-			os.Exit(0)
+		column := ""
+		datatype := []string{}
+
+		if field != "" {
+			for _, v := range strings.Split(field, ",") {
+				fl := strings.Split(v, ":")
+				column += fmt.Sprintf("%s,", fl[0])
+				datatype = append(datatype, fl[1])
+			}
 		}
 
-		// var query string
-		// switch os.Getenv("DB_DRIVER") {
-		// case "postgres":
-		// 	fmt.Println(field)
-		// 	// query += fmt.Sprintf("INSERT INTO %s\n", tableName)
-		// 	// query += "\t(id, name, created_at, updated_at)\n"
-		// 	// query += "VALUES\n"
-		// 	// query += fmt.Sprintf("\t(1, 'bob', %d, %d);\n", time.Now().Unix(), 0)
-		// case "mysql":
-		// 	query += ");\n"
-		// }
+		var loopCount []int
+		if count > 1000 {
+			for i := 0; i < (count / 1000); i++ {
+				loopCount = append(loopCount, 1000)
+			}
+			sisabagi := count % 1000
+			if sisabagi > 0 {
+				loopCount = append(loopCount, sisabagi)
+			}
+		} else {
+			loopCount = append(loopCount, count)
+		}
+		for j, many := range loopCount {
+			query := ""
+			query += fmt.Sprintf("INSERT INTO %s\n", tableName)
+			query += fmt.Sprintf("\t(%s)\n", strings.TrimSuffix(column, ","))
+			query += "VALUES\n"
+			for i := 0; i < many; i++ {
+				var da string
+				for _, tp := range datatype {
+					switch tp {
+					case "uuid":
+						id := uuid.New().String()
+						da += fmt.Sprintf("'%s',", id)
+					case "email":
+						da += fmt.Sprintf("'%s',", gofakeit.Email())
+					case "name":
+						da += fmt.Sprintf("'%s',", gofakeit.Name())
+					case "phone":
+						da += fmt.Sprintf("'%s',", gofakeit.Phone())
+					case "color":
+						da += fmt.Sprintf("'%s',", gofakeit.Color())
+					case "gender":
+						da += fmt.Sprintf("'%s',", gofakeit.Gender())
+					case "hobby":
+						da += fmt.Sprintf("'%s',", gofakeit.Hobby())
+					case "street":
+						da += fmt.Sprintf("'%s',", gofakeit.Street())
+					case "city":
+						da += fmt.Sprintf("'%s',", gofakeit.City())
+					case "country":
+						da += fmt.Sprintf("'%s',", gofakeit.Country())
+					case "lat":
+						da += fmt.Sprintf("%f,", gofakeit.Latitude())
+					case "lng":
+						da += fmt.Sprintf("%f,", gofakeit.Longitude())
+					case "time":
+						da += fmt.Sprintf("%d,", time.Now())
+					case "unixtime":
+						da += fmt.Sprintf("%d,", time.Now().Unix())
+					}
+				}
+				if i == count-1 {
+					query += fmt.Sprintf("\t(%s);\n", strings.TrimSuffix(da, ","))
+				} else {
+					query += fmt.Sprintf("\t(%s),\n", strings.TrimSuffix(da, ","))
+				}
+			}
 
-		file_seeder_down.WriteString(query_down)
-		defer file_seeder_down.Close()
+			unix_up_name := helper.CreateName(nextName + j)
 
-		file_seeder.WriteString(query)
-		defer file_seeder.Close()
-		fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_seeder_down)
-		fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_seeder)
+			file_name_seeder := unix_up_name + "_seeder_" + tableName + ".up.sql"
+			path_seeder := "db/seeder/" + file_name_seeder
+			file_seeder, err := os.Create(path_seeder)
+			if err != nil {
+				fmt.Println(err.Error())
+				os.Exit(0)
+			}
+
+			file_seeder.WriteString(query)
+			defer file_seeder.Close()
+			fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_seeder)
+
+		}
+
 	},
 }
 
