@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 DanangKonang danangkonang21@gmail.com
 
 */
 package cmd
@@ -12,14 +12,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	driver   string
-	host     string
-	port     string
-	database string
-	user     string
-	password string
-)
+// var (
+// 	driver   string
+// 	host     string
+// 	port     string
+// 	database string
+// 	user     string
+// 	password string
+// )
 
 var initCmd = &cobra.Command{
 	Use:   "init",
@@ -44,43 +44,40 @@ var initCmd = &cobra.Command{
 			os.Mkdir(fmt.Sprintf("%sdb/seeder", dirName), 0700)
 			fmt.Println("create directory" + fmt.Sprintf("%sdb/seeder", dirName))
 		}
-		if _, err := os.Stat(fmt.Sprintf("%s.env", dirName)); os.IsNotExist(err) {
-			createEnvFile(fmt.Sprintf("%s.env", dirName))
-			fmt.Println("create file" + fmt.Sprintf("%s.env", dirName))
-		}
+		// if _, err := os.Stat(fmt.Sprintf("%s.env", dirName)); os.IsNotExist(err) {
+		// 	createEnvFile(fmt.Sprintf("%s.env", dirName))
+		// 	fmt.Println("create file" + fmt.Sprintf("%s.env", dirName))
+		// }
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(initCmd)
-	initCmd.PersistentFlags().StringVarP(&driver, "driver", "", "", "databse driver")
-	initCmd.PersistentFlags().StringVarP(&host, "host", "", "", "databse host")
-	initCmd.PersistentFlags().StringVarP(&port, "port", "", "", "databse port")
-	initCmd.PersistentFlags().StringVarP(&database, "database", "", "", "databse database")
-	initCmd.PersistentFlags().StringVarP(&user, "user", "", "", "databse user")
-	initCmd.PersistentFlags().StringVarP(&password, "password", "", "", "databse password")
-	// initCmd.PersistentFlags().StringVarP(&dirName, "dir", "", "", "Directory location migration and seeder")
+	// initCmd.PersistentFlags().StringVarP(&driver, "driver", "", "", "databse driver")
+	// initCmd.PersistentFlags().StringVarP(&host, "host", "", "", "databse host")
+	// initCmd.PersistentFlags().StringVarP(&port, "port", "", "", "databse port")
+	// initCmd.PersistentFlags().StringVarP(&database, "database", "", "", "databse database")
+	// initCmd.PersistentFlags().StringVarP(&user, "user", "", "", "databse user")
+	// initCmd.PersistentFlags().StringVarP(&password, "password", "", "", "databse password")
 }
 
-func createEnvFile(name string) {
-
-	var file, err = os.Create(name)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	if driver == "" {
-		driver = "mysql"
-	}
-	file_env := fmt.Sprintf(
-		"DB_DRIVER=%s\nDB_HOST=%s\nDB_PORT=%s\nDB_NAME=%s\nDB_USER=%s\nDB_PASSWORD=%s\n",
-		driver,
-		host,
-		port,
-		database,
-		user,
-		password,
-	)
-	file.WriteString(file_env)
-	defer file.Close()
-
-}
+// func createEnvFile(name string) {
+// 	var file, err = os.Create(name)
+// 	if err != nil {
+// 		fmt.Println(err.Error())
+// 	}
+// 	if driver == "" {
+// 		driver = "mysql"
+// 	}
+// 	file_env := fmt.Sprintf(
+// 		"DB_DRIVER=%s\nDB_HOST=%s\nDB_PORT=%s\nDB_NAME=%s\nDB_USER=%s\nDB_PASSWORD=%s\n",
+// 		driver,
+// 		host,
+// 		port,
+// 		database,
+// 		user,
+// 		password,
+// 	)
+// 	file.WriteString(file_env)
+// 	defer file.Close()
+// }

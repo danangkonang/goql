@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 DanangKonang danangkonang21@gmail.com
 
 */
 package cmd
@@ -77,8 +77,8 @@ var downSeederCmd = &cobra.Command{
 
 func init() {
 	downCmd.AddCommand(downSeederCmd)
-	downCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Table name")
+	downSeederCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Table name")
 
-	downCmd.PersistentFlags().StringVarP(&dbConnection, "db", "", "", "Database connection")
-	downCmd.MarkFlagRequired("db")
+	downSeederCmd.PersistentFlags().StringVarP(&dbConnection, "db", "", "", "Database connection")
+	downSeederCmd.MarkFlagRequired("db")
 }

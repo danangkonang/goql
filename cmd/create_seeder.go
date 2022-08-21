@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 DanangKonang danangkonang21@gmail.com
 
 */
 package cmd
@@ -51,12 +51,12 @@ var createSeederCmd = &cobra.Command{
 
 		}
 		query_down := ""
-		switch os.Getenv("DB_DRIVER") {
-		case "postgres":
-			query_down += fmt.Sprintf("TRUNCATE %s;", tableName)
-		case "mysql":
-			query_down += fmt.Sprintf("TRUNCATE %s;", tableName)
-		}
+		// switch os.Getenv("DB_DRIVER") {
+		// case "postgres":
+		query_down += fmt.Sprintf("TRUNCATE %s;", tableName)
+		// case "mysql":
+		// 	query_down += fmt.Sprintf("TRUNCATE %s;", tableName)
+		// }
 
 		var nextName int
 		nextName = len(files)

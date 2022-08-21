@@ -6,11 +6,10 @@ package main
 
 import (
 	"github.com/danangkonang/goql/cmd"
-	"github.com/joho/godotenv"
 )
 
 func init() {
-	godotenv.Load()
+	// godotenv.Load()
 }
 
 func main() {

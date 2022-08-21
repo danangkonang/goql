@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 DanangKonang danangkonang21@gmail.com
 
 */
 package cmd
@@ -65,25 +65,25 @@ var migrationCmd = &cobra.Command{
 
 		var query_up string
 		var query_down string
-		switch os.Getenv("DB_DRIVER") {
-		case "postgres":
-			query_up += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s(\n", tableName)
-			query_up += "\tid SERIAL,\n"
-			query_up += "\tname VARCHAR (225) NOT NULL,\n"
-			query_up += "\tcreated_at INTEGER NOT NULL,\n"
-			query_up += "\tupdated_at INTEGER NULL,\n"
-			query_up += fmt.Sprintf("\tCONSTRAINT %s_pkey PRIMARY KEY (id)\n", tableName)
-			query_up += ");\n"
-			query_down += fmt.Sprintf("DROP TABLE IF EXISTS %s;", tableName)
-		case "mysql":
-			query_up += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s(\n", tableName)
-			query_up += "\tid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,\n"
-			query_up += "\tname VARCHAR (225) NOT NULL,\n"
-			query_up += "\tcreated_at INTEGER NOT NULL,\n"
-			query_up += "\tupdated_at INTEGER NULL\n"
-			query_up += ");\n"
-			query_down += fmt.Sprintf("DROP TABLE IF EXISTS %s;", tableName)
-		}
+		// switch os.Getenv("DB_DRIVER") {
+		// case "postgres":
+		// query_up += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s(\n", tableName)
+		// query_up += "\tid SERIAL,\n"
+		// query_up += "\tname VARCHAR (225) NOT NULL,\n"
+		// query_up += "\tcreated_at INTEGER NOT NULL,\n"
+		// query_up += "\tupdated_at INTEGER NULL,\n"
+		// query_up += fmt.Sprintf("\tCONSTRAINT %s_pkey PRIMARY KEY (id)\n", tableName)
+		// query_up += ");\n"
+		// query_down += fmt.Sprintf("DROP TABLE IF EXISTS %s;", tableName)
+		// case "mysql":
+		query_up += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s(\n", tableName)
+		// query_up += "\tid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,\n"
+		query_up += "\tname VARCHAR (225) NOT NULL,\n"
+		query_up += "\tcreated_at INTEGER NOT NULL,\n"
+		query_up += "\tupdated_at INTEGER NULL\n"
+		query_up += ");\n"
+		query_down += fmt.Sprintf("DROP TABLE IF EXISTS %s CASCADE;", tableName)
+		// }
 
 		file_up.WriteString(query_up)
 		file_down.WriteString(query_down)
