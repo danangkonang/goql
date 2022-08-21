@@ -8,3 +8,9 @@ build:
 	OOS=darwin GOARCH=amd64 go build -o goql_macOS goql.go
 upm:
 	go run goql.go up migration --db postgres://postgres:postgres@localhost:5432/migration?sslmode=disable
+downm:
+	go run goql.go down migration --db postgres://postgres:postgres@localhost:5432/migration?sslmode=disable
+ups:
+	go run goql.go up seeder --db postgres://postgres:postgres@localhost:5432/migration?sslmode=disable
+downs:
+	go run goql.go down seeder --db postgres://postgres:postgres@localhost:5432/migration?sslmode=disable
