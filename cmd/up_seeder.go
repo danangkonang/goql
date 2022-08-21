@@ -63,7 +63,7 @@ var upSeederCmd = &cobra.Command{
 			}
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
-			conn := config.Connection()
+			conn := config.Connection(dbConnection)
 			_, err := conn.DB.ExecContext(ctx, string(query))
 			if err != nil {
 				fmt.Println(err.Error())
@@ -79,14 +79,6 @@ var upSeederCmd = &cobra.Command{
 func init() {
 	upCmd.AddCommand(upSeederCmd)
 	upSeederCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Table name")
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// upSeederCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// upSeederCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	upSeederCmd.PersistentFlags().StringVarP(&dbConnection, "db", "", "", "Database connection")
+	upSeederCmd.MarkFlagRequired("db")
 }

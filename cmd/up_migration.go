@@ -17,9 +17,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// var upTableName string
+var dbConnection string
 
-// upMigrationCmd represents the upMigration command
 var upMigrationCmd = &cobra.Command{
 	Use:   "migration",
 	Short: "A brief description of your command",
@@ -67,7 +66,7 @@ var upMigrationCmd = &cobra.Command{
 			}
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
-			conn := config.Connection()
+			conn := config.Connection(dbConnection)
 			_, err := conn.DB.ExecContext(ctx, string(query))
 			if err != nil {
 				fmt.Println(err.Error())
@@ -82,16 +81,6 @@ var upMigrationCmd = &cobra.Command{
 func init() {
 	upCmd.AddCommand(upMigrationCmd)
 	upMigrationCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "A File name to unzip and open in IDE")
-	// upMigrationCmd.PersistentFlags().StringVarP(&dirName, "dir", "", "", "Directory location migration and seeder")
-	// createCmd.PersistentFlags().StringVarP(&upTableName, "table", "t", "", "A File name to unzip and open in IDE")
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// upMigrationCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// upMigrationCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	upMigrationCmd.PersistentFlags().StringVarP(&dbConnection, "db", "", "", "Database connection")
+	upMigrationCmd.MarkFlagRequired("db")
 }

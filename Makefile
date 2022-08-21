@@ -6,4 +6,5 @@ build:
 	GOOS=linux GOARCH=amd64 go build -o goql_linux goql.go
 	GOOS=windows GOARCH=amd64 go build -o goql_windows.exe goql.go
 	OOS=darwin GOARCH=amd64 go build -o goql_macOS goql.go
-	
+upm:
+	go run goql.go up migration --db postgres://postgres:postgres@localhost:5432/migration?sslmode=disable

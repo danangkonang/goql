@@ -96,7 +96,7 @@ var downMigrationCmd = &cobra.Command{
 				}
 				ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 				defer cancel()
-				conn := config.Connection()
+				conn := config.Connection(dbConnection)
 				_, err := conn.DB.ExecContext(ctx, string(query))
 				if err != nil {
 					fmt.Println(err.Error())
@@ -111,14 +111,6 @@ var downMigrationCmd = &cobra.Command{
 
 func init() {
 	downCmd.AddCommand(downMigrationCmd)
-	// downCmd.PersistentFlags().StringVarP(&dirName, "dir", "", "", "Directory location migration and seeder")
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// downMigrationCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// downMigrationCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	downCmd.PersistentFlags().StringVarP(&dbConnection, "db", "", "", "Database connection")
+	downCmd.MarkFlagRequired("db")
 }
