@@ -15,6 +15,7 @@ import (
 )
 
 var tableName string
+var dirName string
 
 // migrationCmd represents the migration command
 var migrationCmd = &cobra.Command{
@@ -22,11 +23,14 @@ var migrationCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Long:  "A brief description of your command",
 	Run: func(cmd *cobra.Command, args []string) {
+		if dirName != "" {
+			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))
+		}
 		if tableName == "" {
 			fmt.Println("table name can not empty")
 			os.Exit(0)
 		}
-		files, err := ioutil.ReadDir("db/migration")
+		files, err := ioutil.ReadDir(dirName + "db/migration")
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(0)
@@ -93,7 +97,7 @@ var migrationCmd = &cobra.Command{
 func init() {
 	createCmd.AddCommand(migrationCmd)
 	migrationCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Table name")
-
+	// migrationCmd.PersistentFlags().StringVarP(&dirName, "dir", "", "", "Directory location migration and seeder")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

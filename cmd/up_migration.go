@@ -25,7 +25,7 @@ var upMigrationCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Long:  "A brief description of your command",
 	Run: func(cmd *cobra.Command, args []string) {
-		files, err := ioutil.ReadDir("db/migration")
+		files, err := ioutil.ReadDir(dirName + "db/migration")
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(0)
@@ -60,7 +60,7 @@ var upMigrationCmd = &cobra.Command{
 		}
 
 		for _, fil := range upFileName {
-			query, e := os.ReadFile(fmt.Sprintf("db/migration/%s", fil))
+			query, e := os.ReadFile(fmt.Sprintf("%sdb/migration/%s", dirName, fil))
 			if e != nil {
 				fmt.Println(e.Error())
 				os.Exit(0)
@@ -82,6 +82,7 @@ var upMigrationCmd = &cobra.Command{
 func init() {
 	upCmd.AddCommand(upMigrationCmd)
 	upMigrationCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "A File name to unzip and open in IDE")
+	// upMigrationCmd.PersistentFlags().StringVarP(&dirName, "dir", "", "", "Directory location migration and seeder")
 	// createCmd.PersistentFlags().StringVarP(&upTableName, "table", "t", "", "A File name to unzip and open in IDE")
 
 	// Here you will define your flags and configuration settings.

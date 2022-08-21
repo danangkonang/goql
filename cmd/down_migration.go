@@ -55,7 +55,7 @@ var downMigrationCmd = &cobra.Command{
 		// 	msg := fmt.Sprintf("%s success %s down %s", string(helper.GREEN), string(helper.WHITE), file.Name())
 		// 	fmt.Println(msg)
 		// }
-		files, err := ioutil.ReadDir("db/migration")
+		files, err := ioutil.ReadDir(dirName + "db/migration")
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(0)
@@ -89,7 +89,7 @@ var downMigrationCmd = &cobra.Command{
 			}
 			for _, fil := range upFileName {
 
-				query, e := os.ReadFile(fmt.Sprintf("db/migration/%s", fil))
+				query, e := os.ReadFile(fmt.Sprintf("%sdb/migration/%s", dirName, fil))
 				if e != nil {
 					fmt.Println(e.Error())
 					os.Exit(0)
@@ -111,7 +111,7 @@ var downMigrationCmd = &cobra.Command{
 
 func init() {
 	downCmd.AddCommand(downMigrationCmd)
-
+	// downCmd.PersistentFlags().StringVarP(&dirName, "dir", "", "", "Directory location migration and seeder")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
