@@ -29,20 +29,20 @@ var initCmd = &cobra.Command{
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))
 		}
-		if _, err := os.Stat(fmt.Sprintf("%sdb", dirName)); os.IsNotExist(err) {
-			os.Mkdir(fmt.Sprintf("%sdb", dirName), 0700)
-			os.Mkdir(fmt.Sprintf("%sdb/migration", dirName), 0700)
-			os.Mkdir(fmt.Sprintf("%sdb/seeder", dirName), 0700)
-			msg := fmt.Sprintf("create directory %sdb", dirName)
-			fmt.Println(msg)
+		// if _, err := os.Stat(fmt.Sprintf("%sdb", dirName)); os.IsNotExist(err) {
+		// 	os.Mkdir(fmt.Sprintf("%sdb", dirName), 0700)
+		// 	os.Mkdir(fmt.Sprintf("%sdb/migration", dirName), 0700)
+		// 	os.Mkdir(fmt.Sprintf("%sdb/seeder", dirName), 0700)
+		// 	msg := fmt.Sprintf("create directory %sdb", dirName)
+		// 	fmt.Println(msg)
+		// }
+		if _, err := os.Stat(fmt.Sprintf("%smigration", dirName)); os.IsNotExist(err) {
+			os.Mkdir(fmt.Sprintf("%smigration", dirName), 0700)
+			fmt.Println("create directory" + fmt.Sprintf("%smigration", dirName))
 		}
-		if _, err := os.Stat(fmt.Sprintf("%sdb/migration", dirName)); os.IsNotExist(err) {
-			os.Mkdir(fmt.Sprintf("%sdb/migration", dirName), 0700)
-			fmt.Println("create directory" + fmt.Sprintf("%sdb/migration", dirName))
-		}
-		if _, err := os.Stat(fmt.Sprintf("%sdb/seeder", dirName)); os.IsNotExist(err) {
-			os.Mkdir(fmt.Sprintf("%sdb/seeder", dirName), 0700)
-			fmt.Println("create directory" + fmt.Sprintf("%sdb/seeder", dirName))
+		if _, err := os.Stat(fmt.Sprintf("%sseeder", dirName)); os.IsNotExist(err) {
+			os.Mkdir(fmt.Sprintf("%sseeder", dirName), 0700)
+			fmt.Println("create directory" + fmt.Sprintf("%sseeder", dirName))
 		}
 		// if _, err := os.Stat(fmt.Sprintf("%s.env", dirName)); os.IsNotExist(err) {
 		// 	createEnvFile(fmt.Sprintf("%s.env", dirName))

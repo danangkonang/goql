@@ -14,3 +14,5 @@ ups:
 	go run goql.go up seeder --db postgres://postgres:postgres@localhost:5432/migration?sslmode=disable
 downs:
 	go run goql.go down seeder --db postgres://postgres:postgres@localhost:5432/migration?sslmode=disable
+db-regional-up:
+	go run goql.go up migration --db postgres://postgres:postgres@localhost:5003/tawisata?sslmode=disable --dir /home/danang/Documents/golang/tawisata/tawisata-backend/schema/regional

@@ -6,3 +6,5 @@ goql_windows.exe
 goql_macOS
 main
 goql
+migration/
+seeder/

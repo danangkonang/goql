@@ -26,11 +26,13 @@ var migrationCmd = &cobra.Command{
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))
 		}
+
 		if tableName == "" {
 			fmt.Println("table name can not empty")
 			os.Exit(0)
 		}
-		files, err := ioutil.ReadDir(dirName + "db/migration")
+
+		files, err := ioutil.ReadDir(dirName + "migration")
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(0)
@@ -47,7 +49,7 @@ var migrationCmd = &cobra.Command{
 		}
 		unix_name_down := helper.CreateName(len(files) + 1)
 		file_name_down := unix_name_down + "_migration_" + tableName + ".down.sql"
-		path_down := "db/migration/" + file_name_down
+		path_down := "migration/" + file_name_down
 		file_down, err := os.Create(path_down)
 		if err != nil {
 			fmt.Println(err.Error())
@@ -56,7 +58,7 @@ var migrationCmd = &cobra.Command{
 
 		unix_name_up := helper.CreateName(len(files))
 		file_name_up := unix_name_up + "_migration_" + tableName + ".up.sql"
-		path_up := "db/migration/" + file_name_up
+		path_up := "migration/" + file_name_up
 		file_up, err := os.Create(path_up)
 		if err != nil {
 			fmt.Println(err.Error())

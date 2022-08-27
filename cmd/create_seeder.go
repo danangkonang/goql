@@ -26,11 +26,15 @@ var createSeederCmd = &cobra.Command{
 	Long:  "Generate seeder file",
 	Run: func(cmd *cobra.Command, args []string) {
 		// fmt.Println("tableName", tableName)
+		if dirName != "" {
+			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))
+		}
+
 		if tableName == "" {
 			fmt.Println("table name can not empty")
 			os.Exit(0)
 		}
-		files, err := ioutil.ReadDir("db/seeder")
+		files, err := ioutil.ReadDir(dirName + "seeder")
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(0)
@@ -65,7 +69,7 @@ var createSeederCmd = &cobra.Command{
 			nextName += 1
 			unix_down_name := helper.CreateName(len(files))
 			file_name_seeder := unix_down_name + "_seeder_" + tableName + ".down.sql"
-			path_down_seeder := "db/seeder/" + file_name_seeder
+			path_down_seeder := "seeder/" + file_name_seeder
 			file_down_seeder, err := os.Create(path_down_seeder)
 			if err != nil {
 				fmt.Println(err.Error())
@@ -149,7 +153,7 @@ var createSeederCmd = &cobra.Command{
 			unix_up_name := helper.CreateName(nextName + j)
 
 			file_name_seeder := unix_up_name + "_seeder_" + tableName + ".up.sql"
-			path_seeder := "db/seeder/" + file_name_seeder
+			path_seeder := "seeder/" + file_name_seeder
 			file_seeder, err := os.Create(path_seeder)
 			if err != nil {
 				fmt.Println(err.Error())

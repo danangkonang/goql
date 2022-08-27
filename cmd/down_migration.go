@@ -23,7 +23,11 @@ var downMigrationCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Long:  "A brief description of your command",
 	Run: func(cmd *cobra.Command, args []string) {
-		files, err := ioutil.ReadDir(dirName + "db/migration")
+		if dirName != "" {
+			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))
+		}
+
+		files, err := ioutil.ReadDir(dirName + "migration")
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(0)
@@ -57,7 +61,7 @@ var downMigrationCmd = &cobra.Command{
 			}
 			for _, fil := range upFileName {
 
-				query, e := os.ReadFile(fmt.Sprintf("%sdb/migration/%s", dirName, fil))
+				query, e := os.ReadFile(fmt.Sprintf("%smigration/%s", dirName, fil))
 				if e != nil {
 					fmt.Println(e.Error())
 					os.Exit(0)

@@ -12,7 +12,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:     "goql",
-	Version: "0.1.2",
+	Version: "0.1.3",
 	Short:   "Simple auto migrate database",
 	Long:    "Simple auto migrate database",
 	CompletionOptions: cobra.CompletionOptions{
