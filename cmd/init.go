@@ -12,15 +12,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// var (
-// 	driver   string
-// 	host     string
-// 	port     string
-// 	database string
-// 	user     string
-// 	password string
-// )
-
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Generate structure directory migration",
@@ -31,11 +22,11 @@ var initCmd = &cobra.Command{
 		}
 		if _, err := os.Stat(fmt.Sprintf("%smigration", dirName)); os.IsNotExist(err) {
 			os.Mkdir(fmt.Sprintf("%smigration", dirName), 0700)
-			fmt.Println("create directory" + fmt.Sprintf("%smigration", dirName))
+			fmt.Println("create directory " + fmt.Sprintf("%smigration", dirName))
 		}
 		if _, err := os.Stat(fmt.Sprintf("%sseeder", dirName)); os.IsNotExist(err) {
 			os.Mkdir(fmt.Sprintf("%sseeder", dirName), 0700)
-			fmt.Println("create directory" + fmt.Sprintf("%sseeder", dirName))
+			fmt.Println("create directory " + fmt.Sprintf("%sseeder", dirName))
 		}
 	},
 }

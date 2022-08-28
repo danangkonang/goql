@@ -25,7 +25,6 @@ var createSeederCmd = &cobra.Command{
 	Short: "Generate seeder file",
 	Long:  "Generate seeder file",
 	Run: func(cmd *cobra.Command, args []string) {
-		// fmt.Println("tableName", tableName)
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))
 		}
@@ -36,8 +35,7 @@ var createSeederCmd = &cobra.Command{
 		}
 		files, err := ioutil.ReadDir(dirName + "seeder")
 		if err != nil {
-			fmt.Println(err.Error())
-			os.Exit(0)
+			os.Mkdir(fmt.Sprintf("%sseeder", dirName), 0700)
 		}
 
 		var isDown bool
@@ -55,12 +53,7 @@ var createSeederCmd = &cobra.Command{
 
 		}
 		query_down := ""
-		// switch os.Getenv("DB_DRIVER") {
-		// case "postgres":
 		query_down += fmt.Sprintf("TRUNCATE %s;", tableName)
-		// case "mysql":
-		// 	query_down += fmt.Sprintf("TRUNCATE %s;", tableName)
-		// }
 
 		var nextName int
 		nextName = len(files)
@@ -121,12 +114,6 @@ var createSeederCmd = &cobra.Command{
 						da += fmt.Sprintf("'%s',", gofakeit.Name())
 					case "phone":
 						da += fmt.Sprintf("'%s',", gofakeit.Phone())
-					case "color":
-						da += fmt.Sprintf("'%s',", gofakeit.Color())
-					case "gender":
-						da += fmt.Sprintf("'%s',", gofakeit.Gender())
-					case "hobby":
-						da += fmt.Sprintf("'%s',", gofakeit.Hobby())
 					case "street":
 						da += fmt.Sprintf("'%s',", gofakeit.Street())
 					case "city":

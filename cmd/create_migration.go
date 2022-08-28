@@ -34,8 +34,7 @@ var migrationCmd = &cobra.Command{
 
 		files, err := ioutil.ReadDir(dirName + "migration")
 		if err != nil {
-			fmt.Println(err.Error())
-			os.Exit(0)
+			os.Mkdir(fmt.Sprintf("%smigration", dirName), 0700)
 		}
 		for _, file := range files {
 			filename := file.Name()
