@@ -17,7 +17,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// downMigrationCmd represents the downMigration command
 var downMigrationCmd = &cobra.Command{
 	Use:   "migration",
 	Short: "A brief description of your command",

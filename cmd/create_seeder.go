@@ -163,9 +163,7 @@ var createSeederCmd = &cobra.Command{
 			file_seeder.WriteString(query)
 			defer file_seeder.Close()
 			fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_seeder)
-
 		}
-
 	},
 }
 
@@ -174,14 +172,4 @@ func init() {
 	createSeederCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Name of table")
 	createSeederCmd.PersistentFlags().StringVarP(&field, "field", "", "", "Data tipe seeder, format 'colum:data type'")
 	createSeederCmd.PersistentFlags().IntVarP(&count, "count", "", 1, "Many seeder data will be generate")
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// createSeederCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// createSeederCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

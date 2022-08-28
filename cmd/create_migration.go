@@ -67,25 +67,12 @@ var migrationCmd = &cobra.Command{
 
 		var query_up string
 		var query_down string
-		// switch os.Getenv("DB_DRIVER") {
-		// case "postgres":
-		// query_up += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s(\n", tableName)
-		// query_up += "\tid SERIAL,\n"
-		// query_up += "\tname VARCHAR (225) NOT NULL,\n"
-		// query_up += "\tcreated_at INTEGER NOT NULL,\n"
-		// query_up += "\tupdated_at INTEGER NULL,\n"
-		// query_up += fmt.Sprintf("\tCONSTRAINT %s_pkey PRIMARY KEY (id)\n", tableName)
-		// query_up += ");\n"
-		// query_down += fmt.Sprintf("DROP TABLE IF EXISTS %s;", tableName)
-		// case "mysql":
 		query_up += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s(\n", tableName)
-		// query_up += "\tid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,\n"
 		query_up += "\tname VARCHAR (225) NOT NULL,\n"
 		query_up += "\tcreated_at INTEGER NOT NULL,\n"
 		query_up += "\tupdated_at INTEGER NULL\n"
 		query_up += ");\n"
 		query_down += fmt.Sprintf("DROP TABLE IF EXISTS %s CASCADE;", tableName)
-		// }
 
 		file_up.WriteString(query_up)
 		file_down.WriteString(query_down)
@@ -99,14 +86,4 @@ var migrationCmd = &cobra.Command{
 func init() {
 	createCmd.AddCommand(migrationCmd)
 	migrationCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Table name")
-	// migrationCmd.PersistentFlags().StringVarP(&dirName, "dir", "", "", "Directory location migration and seeder")
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// migrationCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// migrationCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

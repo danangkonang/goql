@@ -82,7 +82,6 @@ var downSeederCmd = &cobra.Command{
 func init() {
 	downCmd.AddCommand(downSeederCmd)
 	downSeederCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Table name")
-
 	downSeederCmd.PersistentFlags().StringVarP(&dbConnection, "db", "", "", "Database connection")
 	downSeederCmd.MarkFlagRequired("db")
 }
