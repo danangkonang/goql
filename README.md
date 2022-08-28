@@ -4,19 +4,19 @@
 
 ```bash
 # linux
-curl -L https://github.com/danangkonang/goql/releases/download/0.1.2/goql_linux -o goql
+curl -L https://github.com/danangkonang/goql/releases/download/0.1.3/goql_linux -o goql
 chmod +x goql
 # testing
 goql --version
 
 # macOs
-curl -L https://github.com/danangkonang/goql/releases/download/0.1.2/goql_macOs -o goql
+curl -L https://github.com/danangkonang/goql/releases/download/0.1.3/goql_macOs -o goql
 chmod +x goql
 # testing
 goql --version
 
 # windows
-curl -L https://github.com/danangkonang/goql/releases/download/0.1.2/goql_windows -o goql.exe
+curl -L https://github.com/danangkonang/goql/releases/download/0.1.3/goql_windows -o goql.exe
 # chmod +x goql.exe
 # testing
 goql.exe --version
@@ -26,6 +26,15 @@ goql.exe --version
 ```bash
 goql --help
 ```
+# Data Migration
+
+```bash
+# generate sql file
+goql create migration --table users
+
+# execute sql file
+goql up migration --db postgres://user:password@localhost:5432/migration?sslmode=disable
+```
 
 # Data Seeder
 
@@ -33,7 +42,5 @@ goql use [https://github.com/brianvoe/gofakeit](https://github.com/brianvoe/gofa
 
 ```bash
 # create seeder
-goql create seeder --table users --field "name:name,created_at:unixtime" --count 100
-
-goql create seeder --table products --field "id:uuid" --count 10
+goql create seeder --table users --field "id:uuid,name:name,created_at:unixtime" --count 100
 ```
