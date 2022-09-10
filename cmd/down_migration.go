@@ -19,8 +19,8 @@ import (
 
 var downMigrationCmd = &cobra.Command{
 	Use:   "migration",
-	Short: "A brief description of your command",
-	Long:  "A brief description of your command",
+	Short: "Down migration file",
+	Long:  "Down migration file",
 	Run: func(cmd *cobra.Command, args []string) {
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))

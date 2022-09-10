@@ -20,8 +20,8 @@ import (
 // downSeederCmd represents the downSeeder command
 var downSeederCmd = &cobra.Command{
 	Use:   "seeder",
-	Short: "A brief description of your command",
-	Long:  "A brief description of your command",
+	Short: "Down seeder file",
+	Long:  "Down seeder file",
 	Run: func(cmd *cobra.Command, args []string) {
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))

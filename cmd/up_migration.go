@@ -21,8 +21,8 @@ var dbConnection string
 
 var upMigrationCmd = &cobra.Command{
 	Use:   "migration",
-	Short: "A brief description of your command",
-	Long:  "A brief description of your command",
+	Short: "Up migration file",
+	Long:  "Up migration file",
 	Run: func(cmd *cobra.Command, args []string) {
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))

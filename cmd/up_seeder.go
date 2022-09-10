@@ -20,8 +20,8 @@ import (
 // upSeederCmd represents the upSeeder command
 var upSeederCmd = &cobra.Command{
 	Use:   "seeder",
-	Short: "A brief description of your command",
-	Long:  "A brief description of your command",
+	Short: "up seeder file",
+	Long:  "up seeder file",
 	Run: func(cmd *cobra.Command, args []string) {
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))
