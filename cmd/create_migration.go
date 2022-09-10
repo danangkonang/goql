@@ -20,22 +20,25 @@ var dirName string
 // migrationCmd represents the migration command
 var migrationCmd = &cobra.Command{
 	Use:   "migration",
-	Short: "A brief description of your command",
-	Long:  "A brief description of your command",
+	Short: "Generate migration file",
+	Long:  "Generate migration file",
 	Run: func(cmd *cobra.Command, args []string) {
+
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))
+		} else {
+			dirName = "migration/"
 		}
-
 		if tableName == "" {
 			fmt.Println("table name can not empty")
 			os.Exit(0)
 		}
 
-		files, err := ioutil.ReadDir(dirName + "migration")
+		files, err := ioutil.ReadDir(dirName)
 		if err != nil {
-			os.Mkdir(fmt.Sprintf("%smigration", dirName), 0700)
+			os.MkdirAll(dirName, 0700)
 		}
+
 		for _, file := range files {
 			filename := file.Name()
 			rmExtension := strings.Split(filename, ".")
@@ -48,7 +51,7 @@ var migrationCmd = &cobra.Command{
 		}
 		unix_name_down := helper.CreateName(len(files) + 1)
 		file_name_down := unix_name_down + "_migration_" + tableName + ".down.sql"
-		path_down := "migration/" + file_name_down
+		path_down := dirName + file_name_down
 		file_down, err := os.Create(path_down)
 		if err != nil {
 			fmt.Println(err.Error())
@@ -57,7 +60,7 @@ var migrationCmd = &cobra.Command{
 
 		unix_name_up := helper.CreateName(len(files))
 		file_name_up := unix_name_up + "_migration_" + tableName + ".up.sql"
-		path_up := "migration/" + file_name_up
+		path_up := dirName + file_name_up
 		file_up, err := os.Create(path_up)
 		if err != nil {
 			fmt.Println(err.Error())
