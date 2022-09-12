@@ -25,9 +25,11 @@ var upSeederCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))
+		} else {
+			dirName = "seeder/"
 		}
 
-		files, err := ioutil.ReadDir(dirName + "seeder")
+		files, err := ioutil.ReadDir(dirName)
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(0)
@@ -61,7 +63,7 @@ var upSeederCmd = &cobra.Command{
 		}
 
 		for _, fil := range upFileName {
-			query, e := os.ReadFile(fmt.Sprintf("%sseeder/%s", dirName, fil))
+			query, e := os.ReadFile(fmt.Sprintf("%s%s", dirName, fil))
 			if e != nil {
 				fmt.Println(e.Error())
 				os.Exit(0)

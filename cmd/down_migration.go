@@ -24,15 +24,17 @@ var downMigrationCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))
+		} else {
+			dirName = "migration/"
 		}
 
-		files, err := ioutil.ReadDir(dirName + "migration")
+		files, err := ioutil.ReadDir(dirName)
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(0)
 		}
 
-		upFileName := []string{}
+		downFileName := []string{}
 
 		if tableName != "" {
 			for _, file := range files {
@@ -44,7 +46,7 @@ var downMigrationCmd = &cobra.Command{
 					original := strings.Split(fl_up[0], "_migration_")[1]
 					for _, g := range tbls {
 						if g == original {
-							upFileName = append(upFileName, file.Name())
+							downFileName = append(downFileName, file.Name())
 						}
 					}
 				}
@@ -55,12 +57,12 @@ var downMigrationCmd = &cobra.Command{
 			for _, file := range files {
 				// filter only up file
 				if len(strings.Split(file.Name(), ".down.")) > 1 {
-					upFileName = append(upFileName, file.Name())
+					downFileName = append(downFileName, file.Name())
 				}
 			}
-			for _, fil := range upFileName {
+			for _, fil := range downFileName {
 
-				query, e := os.ReadFile(fmt.Sprintf("%smigration/%s", dirName, fil))
+				query, e := os.ReadFile(fmt.Sprintf("%s%s", dirName, fil))
 				if e != nil {
 					fmt.Println(e.Error())
 					os.Exit(0)
