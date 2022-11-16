@@ -75,7 +75,7 @@ var downSeederCmd = &cobra.Command{
 				fmt.Println(err.Error())
 				os.Exit(0)
 			}
-			msg := fmt.Sprintf("%s success %sdown %s", string(helper.GREEN), string(helper.WHITE), fil)
+			msg := fmt.Sprintf("%s success %s down %s", string(helper.GREEN), string(helper.WHITE), fil)
 			fmt.Println(msg)
 		}
 	},
