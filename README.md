@@ -32,8 +32,11 @@ goql --help
 # generate sql file
 goql create migration --table users
 
-# execute sql file
+# execute sql all file
 goql up migration --db postgres://user:password@localhost:5432/migration?sslmode=disable
+
+# execute with specific table
+goql up migration --table "users products"
 ```
 
 # Data Seeder
