@@ -33,7 +33,7 @@ goql --help
 goql create migration --table users
 
 # execute sql all file
-goql up migration --db postgres://user:password@localhost:5432/migration?sslmode=disable
+goql up migration --db postgres://user:password@localhost:5432/database?sslmode=disable
 
 # execute with specific table
 goql up migration --table "users products"
