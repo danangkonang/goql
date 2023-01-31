@@ -21,9 +21,8 @@ import (
 var field string
 var count int
 var createSeederCmd = &cobra.Command{
-	Use:   "seeder",
-	Short: "Generate seeder file",
-	Long:  "Generate seeder file",
+	Use:  "seeder",
+	Long: "Generate seeder file",
 	Run: func(cmd *cobra.Command, args []string) {
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))
@@ -158,7 +157,7 @@ var createSeederCmd = &cobra.Command{
 
 func init() {
 	createCmd.AddCommand(createSeederCmd)
-	createSeederCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Name of table")
-	createSeederCmd.PersistentFlags().StringVarP(&field, "field", "", "", "Data tipe seeder, format 'colum:data type'")
-	createSeederCmd.PersistentFlags().IntVarP(&count, "count", "", 1, "Many seeder data will be generate")
+	createSeederCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "name of table")
+	createSeederCmd.PersistentFlags().StringVarP(&field, "field", "", "", "data type seeder, format 'colum:data type'")
+	createSeederCmd.PersistentFlags().IntVarP(&count, "count", "", 1, "many seeder data will be generate")
 }

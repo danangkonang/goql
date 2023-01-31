@@ -18,9 +18,8 @@ import (
 )
 
 var downMigrationCmd = &cobra.Command{
-	Use:   "migration",
-	Short: "Down migration file",
-	Long:  "Down migration file",
+	Use:  "migration",
+	Long: "Down migration file",
 	Run: func(cmd *cobra.Command, args []string) {
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))
@@ -84,6 +83,7 @@ var downMigrationCmd = &cobra.Command{
 
 func init() {
 	downCmd.AddCommand(downMigrationCmd)
-	downMigrationCmd.PersistentFlags().StringVarP(&dbConnection, "db", "", "", "Database connection")
+	downMigrationCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Table Name")
+	downMigrationCmd.PersistentFlags().StringVarP(&dbConnection, "db", "", "", "database connection")
 	downMigrationCmd.MarkFlagRequired("db")
 }

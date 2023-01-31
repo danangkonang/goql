@@ -14,8 +14,8 @@ import (
 
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Generate structure directory migration",
-	Long:  "Generate structure directory migration",
+	Short: "Generate Structure Directory Migration",
+	Long:  "Generate Structure Directory Migration",
 	Run: func(cmd *cobra.Command, args []string) {
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))

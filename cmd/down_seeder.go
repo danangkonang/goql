@@ -19,9 +19,8 @@ import (
 
 // downSeederCmd represents the downSeeder command
 var downSeederCmd = &cobra.Command{
-	Use:   "seeder",
-	Short: "Down seeder file",
-	Long:  "Down seeder file",
+	Use:  "seeder",
+	Long: "Down seeder file",
 	Run: func(cmd *cobra.Command, args []string) {
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))
@@ -83,7 +82,7 @@ var downSeederCmd = &cobra.Command{
 
 func init() {
 	downCmd.AddCommand(downSeederCmd)
-	downSeederCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Table name")
-	downSeederCmd.PersistentFlags().StringVarP(&dbConnection, "db", "", "", "Database connection")
+	downSeederCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Table Name")
+	downSeederCmd.PersistentFlags().StringVarP(&dbConnection, "db", "", "", "database connection")
 	downSeederCmd.MarkFlagRequired("db")
 }

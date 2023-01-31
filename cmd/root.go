@@ -12,8 +12,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:     "goql",
-	Version: "0.1.5",
-	Short:   "Simple auto migrate database",
+	Version: "0.2.0",
 	Long:    "Simple auto migrate database",
 	CompletionOptions: cobra.CompletionOptions{
 		DisableDefaultCmd: true,
@@ -28,5 +27,8 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&dirName, "dir", "", "", "Directory location migration and seeder")
+	rootCmd.SetHelpCommand(&cobra.Command{
+		Hidden: true,
+	})
+	rootCmd.PersistentFlags().StringVarP(&dirName, "dir", "", "", "directory location migration and seeder")
 }

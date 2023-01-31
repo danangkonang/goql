@@ -19,9 +19,8 @@ var dirName string
 
 // migrationCmd represents the migration command
 var migrationCmd = &cobra.Command{
-	Use:   "migration",
-	Short: "Generate migration file",
-	Long:  "Generate migration file",
+	Use:  "migration",
+	Long: "Generate migration file",
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if dirName != "" {
@@ -86,6 +85,6 @@ var migrationCmd = &cobra.Command{
 }
 
 func init() {
+	migrationCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "name of table")
 	createCmd.AddCommand(migrationCmd)
-	migrationCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Table name")
 }

@@ -20,9 +20,8 @@ import (
 var dbConnection string
 
 var upMigrationCmd = &cobra.Command{
-	Use:   "migration",
-	Short: "Up migration file",
-	Long:  "Up migration file",
+	Use:  "migration",
+	Long: "execute migration file",
 	Run: func(cmd *cobra.Command, args []string) {
 		if dirName != "" {
 			dirName = fmt.Sprintf("%s/", strings.TrimRight(dirName, "/"))
@@ -86,7 +85,7 @@ var upMigrationCmd = &cobra.Command{
 
 func init() {
 	upCmd.AddCommand(upMigrationCmd)
-	upMigrationCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "A File name to unzip and open in IDE")
-	upMigrationCmd.PersistentFlags().StringVarP(&dbConnection, "db", "", "", "Database connection")
+	upMigrationCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "table name (not file name)")
+	upMigrationCmd.PersistentFlags().StringVarP(&dbConnection, "db", "", "", "database connection")
 	upMigrationCmd.MarkFlagRequired("db")
 }
