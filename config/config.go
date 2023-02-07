@@ -18,7 +18,14 @@ type DB struct {
 func Connection(URI string) *DB {
 	arr := strings.Split(URI, "://")
 	driverName := arr[0]
-	db, err := sql.Open(driverName, URI)
+	var u string
+	switch driverName {
+	case "postgres":
+		u = URI
+	case "mysql":
+		u = arr[1]
+	}
+	db, err := sql.Open(driverName, u)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(0)

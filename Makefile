@@ -18,3 +18,6 @@ ups:
 
 downs:
 	go run goql.go down seeder --db postgres://postgres:postgres@localhost:5432/migration?sslmode=disable
+
+mysql:
+	go run goql.go up migration --dir schema/migration --db "mysql://danang:danang@tcp(localhost:3306)/db-cake?parseTime=true&loc=Asia%2FJakarta"
