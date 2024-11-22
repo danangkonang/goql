@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 DanangKonang danangkonang21@gmail.com
-
 */
 package cmd
 
@@ -12,7 +11,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:     "goql",
-	Version: "0.2.0",
+	Version: "0.3.0",
 	Long:    "Simple auto migrate database",
 	CompletionOptions: cobra.CompletionOptions{
 		DisableDefaultCmd: true,

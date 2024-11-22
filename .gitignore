@@ -8,3 +8,4 @@ main
 goql
 migration/
 seeder/
+schema/

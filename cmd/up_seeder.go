@@ -1,13 +1,11 @@
 /*
 Copyright © 2022 DanangKonang danangkonang21@gmail.com
-
 */
 package cmd
 
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 	"time"
@@ -28,7 +26,7 @@ var upSeederCmd = &cobra.Command{
 			dirName = "seeder/"
 		}
 
-		files, err := ioutil.ReadDir(dirName)
+		files, err := os.ReadDir(dirName)
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(0)

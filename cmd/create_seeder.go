@@ -1,17 +1,15 @@
 /*
 Copyright © 2022 DanangKonang danangkonang21@gmail.com
-
 */
 package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 	"time"
 
-	"github.com/brianvoe/gofakeit/v6"
+	"github.com/brianvoe/gofakeit"
 	"github.com/danangkonang/goql/helper"
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"
@@ -34,13 +32,12 @@ var createSeederCmd = &cobra.Command{
 			fmt.Println("table name can not empty")
 			os.Exit(0)
 		}
-		files, err := ioutil.ReadDir(dirName + "seeder")
+		files, err := os.ReadDir(dirName)
 		if err != nil {
 			os.Mkdir(dirName, 0700)
 		}
 
 		var isDown bool
-
 		for _, file := range files {
 			filename := file.Name()
 			downSplit := strings.Split(filename, ".down.")
@@ -53,6 +50,7 @@ var createSeederCmd = &cobra.Command{
 			}
 
 		}
+
 		query_down := ""
 		query_down += fmt.Sprintf("TRUNCATE %s;", tableName)
 
@@ -60,8 +58,9 @@ var createSeederCmd = &cobra.Command{
 		nextName = len(files)
 
 		if !isDown {
-			nextName += 1
 			unix_down_name := helper.CreateName(len(files))
+			fmt.Println(unix_down_name)
+			nextName += 1
 			file_name_seeder := unix_down_name + "_seeder_" + tableName + ".down.sql"
 			path_down_seeder := dirName + file_name_seeder
 			file_down_seeder, err := os.Create(path_down_seeder)
@@ -126,7 +125,7 @@ var createSeederCmd = &cobra.Command{
 					case "lng":
 						da += fmt.Sprintf("%f,", gofakeit.Longitude())
 					case "time":
-						da += fmt.Sprintf("%d,", time.Now())
+						da += fmt.Sprintf("%s,", time.Now())
 					case "unixtime":
 						da += fmt.Sprintf("%d,", time.Now().Unix())
 					}

@@ -1,12 +1,10 @@
 /*
 Copyright © 2022 DanangKonang danangkonang21@gmail.com
-
 */
 package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -33,7 +31,7 @@ var migrationCmd = &cobra.Command{
 			os.Exit(0)
 		}
 
-		files, err := ioutil.ReadDir(dirName)
+		files, err := os.ReadDir(dirName)
 		if err != nil {
 			os.MkdirAll(dirName, 0700)
 		}
@@ -69,9 +67,10 @@ var migrationCmd = &cobra.Command{
 		var query_up string
 		var query_down string
 		query_up += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s(\n", tableName)
+		query_up += "\tid INT AUTO_INCREMENT PRIMARY KEY,\n"
 		query_up += "\tname VARCHAR (225) NOT NULL,\n"
-		query_up += "\tcreated_at INTEGER NOT NULL,\n"
-		query_up += "\tupdated_at INTEGER NULL\n"
+		query_up += "\tcreated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n"
+		query_up += "\tupdated_at TIMESTAMP NULL\n"
 		query_up += ");\n"
 		query_down += fmt.Sprintf("DROP TABLE IF EXISTS %s CASCADE;", tableName)
 

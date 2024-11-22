@@ -1,14 +1,13 @@
 /*
 Copyright © 2022 DanangKonang danangkonang21@gmail.com
-
 */
 package cmd
 
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -27,11 +26,15 @@ var downMigrationCmd = &cobra.Command{
 			dirName = "migration/"
 		}
 
-		files, err := ioutil.ReadDir(dirName)
+		files, err := os.ReadDir(dirName)
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(0)
 		}
+
+		sort.Slice(files, func(i, j int) bool {
+			return files[i].Name() > files[j].Name()
+		})
 
 		downFileName := []string{}
 

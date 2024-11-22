@@ -1,13 +1,11 @@
 /*
 Copyright © 2022 DanangKonang danangkonang21@gmail.com
-
 */
 package cmd
 
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 	"time"
@@ -29,7 +27,7 @@ var upMigrationCmd = &cobra.Command{
 			dirName = "migration/"
 		}
 
-		files, err := ioutil.ReadDir(dirName)
+		files, err := os.ReadDir(dirName)
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(0)
@@ -75,7 +73,8 @@ var upMigrationCmd = &cobra.Command{
 			_, err := conn.DB.ExecContext(ctx, string(query))
 			if err != nil {
 				fmt.Println(err.Error())
-				os.Exit(0)
+				// os.Exit(0)
+				continue
 			}
 			msg := fmt.Sprintf("%s success %s up %s", string(helper.GREEN), string(helper.WHITE), fil)
 			fmt.Println(msg)
