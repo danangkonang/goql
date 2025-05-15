@@ -61,24 +61,36 @@ var upMigrationCmd = &cobra.Command{
 			}
 		}
 
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		conn := config.Connection(dbConnection)
+		tx, err := conn.DB.BeginTx(ctx, nil)
+		if err != nil {
+			fmt.Println(err.Error())
+			os.Exit(0)
+		}
+
 		for _, fil := range upFileName {
 			query, e := os.ReadFile(fmt.Sprintf("%s%s", dirName, fil))
 			if e != nil {
 				fmt.Println(e.Error())
 				os.Exit(0)
 			}
-			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-			defer cancel()
-			conn := config.Connection(dbConnection)
-			_, err := conn.DB.ExecContext(ctx, string(query))
+			// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			// defer cancel()
+			// conn := config.Connection(dbConnection)
+			_, err := tx.ExecContext(ctx, string(query))
 			if err != nil {
+				tx.Rollback()
 				fmt.Println(err.Error())
-				// os.Exit(0)
-				continue
+				os.Exit(0)
+				// continue
 			}
 			msg := fmt.Sprintf("%s success %s up %s", string(helper.GREEN), string(helper.WHITE), fil)
 			fmt.Println(msg)
 		}
+
+		tx.Commit()
 	},
 }
 

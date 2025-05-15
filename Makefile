@@ -1,8 +1,9 @@
 cleare:
-	rm goql_linux goql_windows.exe goql_macOS
+	rm -f goql_linux goql_windows.exe goql_macOS
 
 build:
 	echo "Compiling for every OS and Platform"
+	rm -f goql_linux goql_windows.exe goql_macOS
 	GOOS=linux GOARCH=amd64 go build -o goql_linux goql.go
 	GOOS=windows GOARCH=amd64 go build -o goql_windows.exe goql.go
 	OOS=darwin GOARCH=amd64 go build -o goql_macOS goql.go
@@ -21,6 +22,6 @@ downs:
 
 mysql:
 	go run goql.go up migration --dir schema/migration --db "mysql://danang:danang@tcp(localhost:3306)/simcard?parseTime=true&loc=Asia%2FJakarta"
-# ./goql up migration --dir migration --db "mysql://danang:danang@(localhost:3306)/simcard?parseTime=true"
+	# ./goql up migration --dir migration --db "mysql://danang:danang@(localhost:3306)/simcard?parseTime=true"
 
-go run goql.go down migration --dir migration --db "mysql://root:root@(localhost:3306)/db_hr?parseTime=true"
+	# go run goql.go down migration --dir migration --db "mysql://root:root@(localhost:3306)/db_hr?parseTime=true"

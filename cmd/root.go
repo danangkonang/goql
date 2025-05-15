@@ -11,7 +11,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:     "goql",
-	Version: "0.3.0",
+	Version: "0.5.3",
 	Long:    "Simple auto migrate database",
 	CompletionOptions: cobra.CompletionOptions{
 		DisableDefaultCmd: true,

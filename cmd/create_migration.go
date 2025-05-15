@@ -31,59 +31,62 @@ var migrationCmd = &cobra.Command{
 			os.Exit(0)
 		}
 
-		files, err := os.ReadDir(dirName)
-		if err != nil {
-			os.MkdirAll(dirName, 0700)
-		}
+		names := strings.Split(tableName, ",")
+		for _, v := range names {
+			files, err := os.ReadDir(dirName)
+			if err != nil {
+				os.MkdirAll(dirName, 0700)
+			}
 
-		for _, file := range files {
-			filename := file.Name()
-			rmExtension := strings.Split(filename, ".")
-			rmMigration := strings.Split(rmExtension[0], "_migration_")
-			originalname := rmMigration[1]
-			if tableName == originalname {
-				fmt.Printf("table '%s' already exists", tableName)
+			for _, file := range files {
+				filename := file.Name()
+				rmExtension := strings.Split(filename, ".")
+				rmMigration := strings.Split(rmExtension[0], "_migration_")
+				originalname := rmMigration[1]
+				if v == originalname {
+					fmt.Printf("table '%s' already exists", v)
+					os.Exit(0)
+				}
+			}
+			unix_name_down := helper.CreateName(len(files) + 1)
+			file_name_down := unix_name_down + "_migration_" + v + ".down.sql"
+			path_down := dirName + file_name_down
+			file_down, err := os.Create(path_down)
+			if err != nil {
+				fmt.Println(err.Error())
 				os.Exit(0)
 			}
-		}
-		unix_name_down := helper.CreateName(len(files) + 1)
-		file_name_down := unix_name_down + "_migration_" + tableName + ".down.sql"
-		path_down := dirName + file_name_down
-		file_down, err := os.Create(path_down)
-		if err != nil {
-			fmt.Println(err.Error())
-			os.Exit(0)
-		}
 
-		unix_name_up := helper.CreateName(len(files))
-		file_name_up := unix_name_up + "_migration_" + tableName + ".up.sql"
-		path_up := dirName + file_name_up
-		file_up, err := os.Create(path_up)
-		if err != nil {
-			fmt.Println(err.Error())
-			os.Exit(0)
+			unix_name_up := helper.CreateName(len(files))
+			file_name_up := unix_name_up + "_migration_" + v + ".up.sql"
+			path_up := dirName + file_name_up
+			file_up, err := os.Create(path_up)
+			if err != nil {
+				fmt.Println(err.Error())
+				os.Exit(0)
+			}
+
+			var query_up string
+			var query_down string
+			query_up += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s(\n", v)
+			query_up += "\tid INT AUTO_INCREMENT PRIMARY KEY,\n"
+			query_up += "\tname VARCHAR(225) NOT NULL,\n"
+			query_up += "\tcreated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n"
+			query_up += "\tupdated_at TIMESTAMP NULL\n"
+			query_up += ");\n"
+			query_down += fmt.Sprintf("DROP TABLE IF EXISTS %s CASCADE;", v)
+
+			file_up.WriteString(query_up)
+			file_down.WriteString(query_down)
+			defer file_up.Close()
+			defer file_down.Close()
+			fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_down)
+			fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_up)
 		}
-
-		var query_up string
-		var query_down string
-		query_up += fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s(\n", tableName)
-		query_up += "\tid INT AUTO_INCREMENT PRIMARY KEY,\n"
-		query_up += "\tname VARCHAR (225) NOT NULL,\n"
-		query_up += "\tcreated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n"
-		query_up += "\tupdated_at TIMESTAMP NULL\n"
-		query_up += ");\n"
-		query_down += fmt.Sprintf("DROP TABLE IF EXISTS %s CASCADE;", tableName)
-
-		file_up.WriteString(query_up)
-		file_down.WriteString(query_down)
-		defer file_up.Close()
-		defer file_down.Close()
-		fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_down)
-		fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_up)
 	},
 }
 
 func init() {
-	migrationCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "name of table")
+	migrationCmd.PersistentFlags().StringVarP(&tableName, "table", "t", "", "Name of tables to generate migrations for (comma-separated for multiple tables, e.g., users,products)")
 	createCmd.AddCommand(migrationCmd)
 }

@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -31,6 +32,10 @@ var downSeederCmd = &cobra.Command{
 			fmt.Println(err.Error())
 			os.Exit(0)
 		}
+		sort.Slice(files, func(i, j int) bool {
+			return files[i].Name() > files[j].Name()
+		})
+
 		downFileName := []string{}
 
 		if tableName != "" {
@@ -59,7 +64,7 @@ var downSeederCmd = &cobra.Command{
 		}
 
 		for _, fil := range downFileName {
-			query, e := os.ReadFile(fil)
+			query, e := os.ReadFile(fmt.Sprintf("%s%s", dirName, fil))
 			if e != nil {
 				fmt.Println(e.Error())
 				os.Exit(0)
