@@ -4,19 +4,19 @@
 
 ```bash
 # linux
-curl -L https://github.com/danangkonang/goql/releases/download/0.2.0/goql_linux -o goql
+curl -L https://github.com/danangkonang/goql/releases/download/0.7.0/goql_linux -o goql
 chmod +x goql
 # testing
 goql --version
 
 # macOs
-curl -L https://github.com/danangkonang/goql/releases/download/0.2.0/goql_macOs -o goql
+curl -L https://github.com/danangkonang/goql/releases/download/0.7.0/goql_macOs -o goql
 chmod +x goql
 # testing
 goql --version
 
 # windows
-curl -L https://github.com/danangkonang/goql/releases/download/0.2.0/goql_windows -o goql.exe
+curl -L https://github.com/danangkonang/goql/releases/download/0.2.7/goql_windows -o goql.exe
 # chmod +x goql.exe
 # testing
 goql.exe --version
