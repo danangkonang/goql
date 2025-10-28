@@ -2,24 +2,34 @@
 
 ## Install
 
+### Linux
+
 ```bash
 # linux
 curl -L https://github.com/danangkonang/goql/releases/download/0.7.0/goql_linux -o goql
-chmod +x goql
-# testing
-goql --version
 
+chmod +x goql
+
+# testing
+./goql --version
+```
+### Mac Os
+```bash
 # macOs
 curl -L https://github.com/danangkonang/goql/releases/download/0.7.0/goql_macOs -o goql
-chmod +x goql
-# testing
-goql --version
 
-# windows
-curl -L https://github.com/danangkonang/goql/releases/download/0.2.7/goql_windows -o goql.exe
-# chmod +x goql.exe
+chmod +x goql
+
 # testing
-goql.exe --version
+./goql --version
+```
+### Windows
+```ps1
+# Windows PowerShell
+Invoke-WebRequest -Uri "https://github.com/danangkonang/goql/releases/download/0.7.0/goql_windows.exe" -OutFile "goql.exe"
+
+# testing
+.\goql.exe --version
 ```
 
 ## Usage
