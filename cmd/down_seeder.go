@@ -63,16 +63,23 @@ var downSeederCmd = &cobra.Command{
 
 		}
 
+		conn := config.Connection(dbConnection)
+		defer conn.DB.Close()
+
 		for _, fil := range downFileName {
 			query, e := os.ReadFile(fmt.Sprintf("%s%s", dirName, fil))
 			if e != nil {
 				fmt.Println(e.Error())
 				os.Exit(0)
 			}
-			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-			defer cancel()
-			conn := config.Connection(dbConnection)
-			_, err := conn.DB.ExecContext(ctx, string(query))
+
+			err := func() error {
+				ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+				defer cancel()
+
+				_, err := conn.DB.ExecContext(ctx, string(query))
+				return err
+			}()
 			if err != nil {
 				fmt.Println(err.Error())
 				os.Exit(0)

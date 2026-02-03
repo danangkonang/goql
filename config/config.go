@@ -30,8 +30,8 @@ func Connection(URI string) *DB {
 		fmt.Println(err.Error())
 		os.Exit(0)
 	}
-	db.SetMaxOpenConns(50)
-	db.SetMaxIdleConns(10)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(1)
 	db.SetConnMaxLifetime(5 * time.Minute)
 	return &DB{DB: db}
 }

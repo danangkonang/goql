@@ -20,6 +20,9 @@ ups:
 downs:
 	go run goql.go down seeder --db postgres://postgres:postgres@localhost:5432/migration?sslmode=disable
 
+seed:
+	go run goql.go up seeder --dir /home/danang/Documents/humarizone/backend-humarizone/migration/schema --db postgres://postgres:qmznagNlyXkUZhf4SJ2M@database-2.cp4c6aqu6oke.ap-southeast-3.rds.amazonaws.com:5432/humarizone?sslmode=require
+
 mysql:
 	go run goql.go up migration --dir schema/migration --db "mysql://danang:danang@tcp(localhost:3306)/simcard?parseTime=true&loc=Asia%2FJakarta"
 	# ./goql up migration --dir migration --db "mysql://danang:danang@(localhost:3306)/simcard?parseTime=true"
