@@ -4,6 +4,7 @@ db/
 goql_linux
 goql_windows.exe
 goql_macOS
+*.exe
 main
 goql
 migration/
