@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -41,6 +42,7 @@ var createSeederCmd = &cobra.Command{
 			}
 
 			var isDown bool
+			maxSeq := 0
 			for _, file := range files {
 				filename := file.Name()
 				downSplit := strings.Split(filename, ".down.")
@@ -52,29 +54,17 @@ var createSeederCmd = &cobra.Command{
 					}
 				}
 
+				parts := strings.SplitN(file.Name(), "_", 2)
+				if seq, err := strconv.Atoi(parts[0]); err == nil {
+					if seq > maxSeq {
+						maxSeq = seq
+					}
+				}
+
 			}
 
 			query_down := ""
 			query_down += fmt.Sprintf("TRUNCATE %s;", v)
-
-			var nextName int
-			nextName = len(files)
-
-			if !isDown {
-				unix_down_name := helper.CreateName(len(files))
-				fmt.Println(unix_down_name)
-				nextName += 1
-				file_name_seeder := unix_down_name + "_seeder_" + v + ".down.sql"
-				path_down_seeder := dirName + file_name_seeder
-				file_down_seeder, err := os.Create(path_down_seeder)
-				if err != nil {
-					fmt.Println(err.Error())
-					os.Exit(0)
-				}
-				file_down_seeder.WriteString(query_down)
-				defer file_down_seeder.Close()
-				fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_down_seeder)
-			}
 
 			column := ""
 			datatype := []string{}
@@ -140,7 +130,7 @@ var createSeederCmd = &cobra.Command{
 					}
 				}
 
-				unix_up_name := helper.CreateName(nextName + j)
+				unix_up_name := helper.CreateNextName(maxSeq + 1 + j)
 
 				file_name_seeder := unix_up_name + "_seeder_" + v + ".up.sql"
 				path_seeder := dirName + file_name_seeder
@@ -153,6 +143,21 @@ var createSeederCmd = &cobra.Command{
 				file_seeder.WriteString(query)
 				defer file_seeder.Close()
 				fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_seeder)
+			}
+
+			if !isDown {
+				unix_down_name := helper.CreateNextName(maxSeq + len(loopCount) + 1)
+
+				file_name_seeder := unix_down_name + "_seeder_" + v + ".down.sql"
+				path_down_seeder := dirName + file_name_seeder
+				file_down_seeder, err := os.Create(path_down_seeder)
+				if err != nil {
+					fmt.Println(err.Error())
+					os.Exit(0)
+				}
+				file_down_seeder.WriteString(query_down)
+				defer file_down_seeder.Close()
+				fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_down_seeder)
 			}
 		}
 	},

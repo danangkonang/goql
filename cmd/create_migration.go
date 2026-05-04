@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/danangkonang/goql/helper"
@@ -38,29 +39,37 @@ var migrationCmd = &cobra.Command{
 				os.MkdirAll(dirName, 0700)
 			}
 
+			maxSeq := 0
 			for _, file := range files {
 				filename := file.Name()
 				rmExtension := strings.Split(filename, ".")
 				rmMigration := strings.Split(rmExtension[0], "_migration_")
 				originalname := rmMigration[1]
 				if v == originalname {
-					fmt.Printf("table '%s' already exists", v)
+					fmt.Printf("table '%s' already exists\n", v)
 					os.Exit(0)
 				}
+
+				parts := strings.SplitN(file.Name(), "_", 2)
+				if seq, err := strconv.Atoi(parts[0]); err == nil {
+					if seq > maxSeq {
+						maxSeq = seq
+					}
+				}
 			}
-			unix_name_down := helper.CreateName(len(files) + 1)
-			file_name_down := unix_name_down + "_migration_" + v + ".down.sql"
-			path_down := dirName + file_name_down
-			file_down, err := os.Create(path_down)
+			unix_name_up := helper.CreateNextName(maxSeq + 1)
+			file_name_up := unix_name_up + "_migration_" + v + ".up.sql"
+			path_up := dirName + file_name_up
+			file_up, err := os.Create(path_up)
 			if err != nil {
 				fmt.Println(err.Error())
 				os.Exit(0)
 			}
 
-			unix_name_up := helper.CreateName(len(files))
-			file_name_up := unix_name_up + "_migration_" + v + ".up.sql"
-			path_up := dirName + file_name_up
-			file_up, err := os.Create(path_up)
+			unix_name_down := helper.CreateNextName(maxSeq + 2)
+			file_name_down := unix_name_down + "_migration_" + v + ".down.sql"
+			path_down := dirName + file_name_down
+			file_down, err := os.Create(path_down)
 			if err != nil {
 				fmt.Println(err.Error())
 				os.Exit(0)
@@ -80,8 +89,8 @@ var migrationCmd = &cobra.Command{
 			file_down.WriteString(query_down)
 			defer file_up.Close()
 			defer file_down.Close()
-			fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_down)
 			fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_up)
+			fmt.Println(string(helper.GREEN), "success", string(helper.WHITE), "created", path_down)
 		}
 	},
 }

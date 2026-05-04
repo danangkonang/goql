@@ -64,6 +64,7 @@ var upMigrationCmd = &cobra.Command{
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		conn := config.Connection(dbConnection)
+		defer conn.DB.Close()
 		tx, err := conn.DB.BeginTx(ctx, nil)
 		if err != nil {
 			fmt.Println(err.Error())
