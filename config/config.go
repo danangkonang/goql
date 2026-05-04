@@ -1,3 +1,6 @@
+/*
+Copyright © 2022 DanangKonang danangkonang21@gmail.com
+*/
 package config
 
 import (
